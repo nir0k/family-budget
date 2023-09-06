@@ -42,10 +42,10 @@ class Transaction(models.Model):
     author = models.ForeignKey(User,
                                verbose_name='Author',
                                on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        ordering = ["-created"]
+        ordering = ["-date"]
 
     def __str__(self):
         return self.title
