@@ -12,9 +12,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class Transaction_TypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
+    list_display = ('id', 'title', 'type')
+    list_display_links = ('id', 'title', 'type')
     search_fields = ('title',)
+    list_filter = ('type',)
     empty_value_display = '-empty-'
 
 

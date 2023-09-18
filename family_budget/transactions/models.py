@@ -3,13 +3,23 @@ from django.db import models
 from users.models import User
 from accounts.models import Account
 
+TRANSACTION_TYPE = [
+    ('+', 'Income'),
+    ('-', 'Expense')
+]
+
 
 class Transaction_Type(models.Model):
     title = models.CharField(max_length=100)
+    type = models.CharField(
+        max_length=1,
+        choices=TRANSACTION_TYPE,
+        default='-',
+    )
 
     class Meta:
-        ordering = ["title"]
-        verbose_name = "Type"
+        ordering = ['title']
+        verbose_name = 'Type'
 
     def __str__(self):
         return self.title
@@ -22,7 +32,7 @@ class Category(models.Model):
                              on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ["title"]
+        ordering = ['title']
 
     def __str__(self):
         return self.title
@@ -30,7 +40,9 @@ class Category(models.Model):
 
 class Transaction(models.Model):
     title = models.CharField(max_length=100)
-    type = models.ForeignKey(Transaction_Type, on_delete=models.CASCADE)
+    type = models.ForeignKey(Transaction_Type,
+                             related_name="transaction_type",
+                             on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     who = models.ForeignKey(User,
                             verbose_name='Who',
@@ -45,7 +57,7 @@ class Transaction(models.Model):
     date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        ordering = ["-date"]
+        ordering = ['-date']
 
     def __str__(self):
         return self.title
