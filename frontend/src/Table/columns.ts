@@ -1,9 +1,9 @@
 import { createColumnHelper } from '@tanstack/react-table'
 import { TableCell } from './TableCell'
-import { Student } from './data'
+import { TransactionData }from '../components/types'
 import { EditCell } from './EditCell'
 
-const columnHelper = createColumnHelper<Student>()
+const columnHelper = createColumnHelper<TransactionData>()
 
 export const columns = [
   columnHelper.accessor('id', {

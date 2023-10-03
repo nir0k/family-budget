@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Student, data as defaultData } from "./data";
+// import { data as defaultData } from "./data";
+import { TransactionData } from "../components/types"
 import "./table.css";
 
 import {
@@ -10,9 +11,16 @@ import {
 import { columns } from "./columns";
 import { FooterCell } from "./FooterCell";
 
+import { useGetTransactions } from '../components/use-queries';
+
+
 export const Table = () => {
-  const [data, setData] = useState(() => [...defaultData]);
-  const [originalData, setOriginalData] = useState(() => [...defaultData]);
+
+  const tdata = useGetTransactions()
+  if (tdata.length === 0) return null;
+  
+  const [data, setData] = useState(() => tdata);
+  const [originalData, setOriginalData] = useState(() => tdata);
   const [editedRows, setEditedRows] = useState({});
 
   const table = useReactTable({
@@ -50,24 +58,30 @@ export const Table = () => {
         );
       },
       addRow: () => {
-        const newRow: Student = {
+        const newRow: TransactionData = {
           id: Math.floor(Math.random() * 10000),
           title: "",
           type: 1,
           amount: 1,
+          category: 0,
+          who: 0,
+          account: 0,
+          description: "",
+          author: 0,
+          date: ""
         };
-        const setFunc = (old: Student[]) => [...old, newRow];
+        const setFunc = (old: TransactionData[]) => [...old, newRow];
         setData(setFunc);
         setOriginalData(setFunc);
       },
       removeRow: (rowIndex: number) => {
-        const setFilterFunc = (old: Student[]) =>
-          old.filter((_row: Student, index: number) => index !== rowIndex);
+        const setFilterFunc = (old: TransactionData[]) =>
+          old.filter((_row: TransactionData, index: number) => index !== rowIndex);
         setData(setFilterFunc);
         setOriginalData(setFilterFunc);
       },
       removeSelectedRows: (selectedRows: number[]) => {
-        const setFilterFunc = (old: Student[]) =>
+        const setFilterFunc = (old: TransactionData[]) =>
           old.filter((_row, index) => !selectedRows.includes(index));
         setData(setFilterFunc);
         setOriginalData(setFilterFunc);

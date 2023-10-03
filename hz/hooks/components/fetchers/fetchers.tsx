@@ -15,15 +15,15 @@ export async function get<T>(
         return await response.json()
     }
 
-// export async function get(path: string){
-//     try {
-//         const response = await fetch(path);
-//         const json = await response.json();
-//         return json
-//         // setData(json.movies);
-//     } catch (error) {
-//         console.error(error);
-//     } finally {
-//         // setLoading(false);
-//     }
-// };
+export async function get(path: string){
+    try {
+        const response = await fetch(path);
+        const json = await response.json();
+        return json
+        // setData(json.movies);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        // setLoading(false);
+    }
+};
