@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-5">Edit Expense Item</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+    </form>
+{% endblock %}

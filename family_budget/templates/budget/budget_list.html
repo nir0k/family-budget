@@ -2,14 +2,43 @@
 
 {% block content %}
     <h1>Budgets</h1>
-    <ul>
-        {% for budget in budgets %}
-            <li>
-                <a href="{% url 'budget_detail' budget.pk %}">{{ budget.title }}</a>
-            </li>
-        {% empty %}
-            <p>No budgets available.</p>
-        {% endfor %}
-    </ul>
-    {% comment %} <a href="{% url 'budget_create' %}">Create a new budget</a> {% endcomment %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Total Budget</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for budget in budgets %}
+                    <tr>
+                        <td>{{ budget.title }}</td>
+                        <td>{{ budget.start_date }}</td>
+                        <td>{{ budget.end_date }}</td>
+                        <td>${{ budget.total_budget }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{% url 'budget_detail' budget.pk %}">View Details</a>
+                            <a class="btn btn-warning" href="{% url 'edit_budget' budget.pk %}">Edit</a>  {# Add Edit link #}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No budgets available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Create a New Budget</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-success" type="submit">Create Budget</button>
+    </form>
+</div>
 {% endblock %}
