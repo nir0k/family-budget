@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Budget, ExpenseItem
+from transactions.models import Category
 from .forms import BudgetForm, ExpenseItemForm
 
 
@@ -8,17 +9,43 @@ def budget_list(request):
 
     if request.method == 'POST':
         form = BudgetForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('budget_list')
+        if 'delete' in request.POST:
+            item_id = int(request.POST['delete'])
+            item_to_delete = get_object_or_404(Budget, pk=item_id)
+            item_to_delete.delete()
+        else:
+            if form.is_valid():
+                new_budget = form.save()
 
+                expense_categories = Category.objects.filter(type__type='-')
+                for category in expense_categories:
+                    ExpenseItem.objects.create(
+                        description=f"Expense for {category.title}",
+                        category=category,
+                        budget=new_budget,
+                        amount=0.0
+                    )
+
+                income_categories = Category.objects.filter(type__type='+')
+                for category in income_categories:
+                    ExpenseItem.objects.create(
+                        description=f"Income for {category.title}",
+                        category=category,
+                        budget=new_budget,
+                        amount=0.0
+                    )
+
+        return redirect('budget_list')
     else:
         form = BudgetForm()
 
     return render(
         request,
         'budget/budget_list.html',
-        {'budgets': budgets, 'form': form}
+        {
+            'budgets': budgets,
+            'form': form
+        }
     )
 
 
@@ -88,4 +115,50 @@ def edit_expense_item(request, item_id):
         request,
         'budget/edit_expense_item.html',
         {'form': form, 'item': item}
+    )
+
+
+def delete_budget(request, budget_id):
+    budget = get_object_or_404(Budget, pk=budget_id)
+
+    if request.method == 'POST':
+        budget.delete()
+        return redirect('budget_list')
+
+    return render(
+        request,
+        'budget/delete_budget.html',
+        {'budget': budget}
+    )
+
+
+def copy_budget(request, budget_id):
+    original_budget = get_object_or_404(Budget, pk=budget_id)
+
+    if request.method == 'POST':
+        # Create a new budget based on the original budget
+        form = BudgetForm(request.POST, instance=original_budget)
+        if form.is_valid():
+            new_budget = form.save(commit=False)
+            new_budget.pk = None  # Create a new budget instance
+            new_budget.title = f"Copy of {original_budget.title}"
+            new_budget.save()
+
+            # Create copies of expense items
+            original_items = original_budget.expenseitem_set.all()
+            for original_item in original_items:
+                new_item = original_item
+                new_item.pk = None  # Create a new item instance
+                new_item.budget = new_budget
+                new_item.save()
+
+            return redirect('budget_list')
+
+    else:
+        form = BudgetForm(instance=original_budget)
+
+    return render(
+        request,
+        'budget/copy_budget.html',
+        {'form': form, 'original_budget': original_budget}
     )

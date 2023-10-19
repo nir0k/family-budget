@@ -22,7 +22,13 @@
                         <td>${{ budget.total_budget }}</td>
                         <td>
                             <a class="btn btn-primary" href="{% url 'budget_detail' budget.pk %}">View Details</a>
-                            <a class="btn btn-warning" href="{% url 'edit_budget' budget.pk %}">Edit</a>  {# Add Edit link #}
+                            <a class="btn btn-warning" href="{% url 'edit_budget' budget.pk %}">Edit</a>
+                            <a class="btn btn-success" href="{% url 'copy_budget' budget.pk %}">Copy</a>
+                            <form method="post" action="{% url 'budget_list' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete" value="{{ budget.pk }}">
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 {% empty %}
@@ -37,7 +43,9 @@
     <h2>Create a New Budget</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <table>
+            {{ form.as_table }}
+        </table>
         <button class="btn btn-success" type="submit">Create Budget</button>
     </form>
 </div>
