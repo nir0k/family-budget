@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Budgets</h1>
+    <ul>
+        {% for budget in budgets %}
+            <li>
+                <a href="{% url 'budget_detail' budget.pk %}">{{ budget.title }}</a>
+            </li>
+        {% empty %}
+            <p>No budgets available.</p>
+        {% endfor %}
+    </ul>
+    {% comment %} <a href="{% url 'budget_create' %}">Create a new budget</a> {% endcomment %}
+{% endblock %}

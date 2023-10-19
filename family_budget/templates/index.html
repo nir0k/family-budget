@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <h2>Family budget</h2>
+        <p>Total Income: {{ total_income|floatformat:2 }}</p>
+        <p>Total Expense: {{ total_expense|floatformat:2 }}</p>
+        <p>Current balance: {{ current_balance|floatformat:2 }}</p>
+    </div>
+    <div class="container">
+        <p>Total Income: {{ total_income|floatformat:2 }}</p>
+        <h3>Income Per Category:</h3>
+        <ul>
+            {% for category_income in category_incomes %}
+                <li>{{ category_income.category_title }}: {{ category_income.category_income|floatformat:2 }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
