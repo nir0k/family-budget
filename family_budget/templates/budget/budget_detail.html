@@ -2,7 +2,6 @@
 
 {% block content %}
     <h1 class="mt-5">{{ budget.title }}</h1>
-
     <h2 class="mt-4">Create New Expense Item</h2>
     <form method="post">
         {% csrf_token %}
@@ -10,6 +9,7 @@
         {{ expense_item_form.as_table }}
         </table>
         <button class="btn btn-primary" type="submit">Create Expense Item</button>
+        <span class="error">{{form.errors}}</span>
     </form>
 
     <h2 class="mt-4">Income</h2>

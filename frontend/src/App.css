@@ -1,0 +1,99 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  background-color: #222;
+  color: #eee;
+}
+
+.nav-panel {
+  background-color: #333; /* dark background */
+  padding: 1rem 2rem; /* vertical & horizontal padding */
+  display: flex;
+  justify-content: flex-start; /* default alignment to start */
+  align-items: center;
+}
+
+.nav-link {
+  color: #FFF; /* white text */
+  text-decoration: none;
+  margin: 0 1rem; /* spacing between links */
+  padding-bottom: 4px; /* for the underline effect */
+  transition: color 0.3s, border-bottom 0.3s; /* smooth transition on hover */
+  font-size: 1.1rem; /* slightly larger font */
+  font-weight: 500; /* medium font weight */
+  position: relative; /* relative positioning for after pseudo-element */
+}
+
+.nav-link:hover {
+  color: #FFD700; /* gold text on hover */
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #FFD700; /* gold underline */
+  transform: scaleX(0); /* set initial state to 0 width */
+  transform-origin: right;
+  transition: transform 0.3s; /* smooth expand transition */
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1); /* expand underline on hover */
+  transform-origin: left;
+}
+
+.active-link::after {
+  transform: scaleX(1); /* always expanded underline for active link */
+  transform-origin: left;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px; /* gap between links for spacing */
+  margin-left: 20px; /* space between the logo and the links */
+}
+
+.ag-cell {
+  padding: 4px;  /* Adjust as needed */
+}

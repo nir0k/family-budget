@@ -2,6 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Budget, ExpenseItem
 from transactions.models import Category
 from .forms import BudgetForm, ExpenseItemForm
+# from django.db.models import Q
+from rest_framework import viewsets
+from .serializers import BudgetSerializer, ExpenseItemSerializer
 
 
 def budget_list(request):
@@ -51,7 +54,7 @@ def budget_list(request):
 
 def budget_detail(request, budget_id):
     budget = get_object_or_404(Budget, pk=budget_id)
-    expense_items = budget.expenseitem_set.all()
+    expense_items = budget.expense_items.all()
 
     if request.method == 'POST':
         expense_item_form = ExpenseItemForm(request.POST)
@@ -136,19 +139,17 @@ def copy_budget(request, budget_id):
     original_budget = get_object_or_404(Budget, pk=budget_id)
 
     if request.method == 'POST':
-        # Create a new budget based on the original budget
         form = BudgetForm(request.POST, instance=original_budget)
         if form.is_valid():
             new_budget = form.save(commit=False)
-            new_budget.pk = None  # Create a new budget instance
+            new_budget.pk = None
             new_budget.title = f"Copy of {original_budget.title}"
             new_budget.save()
 
-            # Create copies of expense items
             original_items = original_budget.expenseitem_set.all()
             for original_item in original_items:
                 new_item = original_item
-                new_item.pk = None  # Create a new item instance
+                new_item.pk = None
                 new_item.budget = new_budget
                 new_item.save()
 
@@ -162,3 +163,13 @@ def copy_budget(request, budget_id):
         'budget/copy_budget.html',
         {'form': form, 'original_budget': original_budget}
     )
+
+
+class BudgetViewSet(viewsets.ModelViewSet):
+    queryset = Budget.objects.all()
+    serializer_class = BudgetSerializer
+
+
+class ExpenseItemViewSet(viewsets.ModelViewSet):
+    queryset = ExpenseItem.objects.all()
+    serializer_class = ExpenseItemSerializer

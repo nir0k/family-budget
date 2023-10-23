@@ -18,58 +18,87 @@
             width: 200px;
             padding: 5px;
         }
+        .editing {
+            display: none;
+        }
     </style>
+    <script>
+        function toggleEdit(rowId) {
+            let elements = document.querySelectorAll(`.row-${rowId}`);
+            elements.forEach(el => {
+                if (el.classList.contains('editing')) {
+                    el.style.display = el.style.display === 'none' ? '' : 'none';
+                }
+            });
+        }
+    </script>
 {% endblock %}
 {% block content %}
     <h1>Transaction List</h1>
-        <form method="get">
-            {% for field in filter.form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-secondary">Filter</button>
-        </form>
-        <table class="styled-table">
+    <form method="get">
+        {% for field in filter.form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-secondary">Filter</button>
+    </form>
+    <table class="styled-table">
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Who</th>
+            <th>Account</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        {% for transaction in transactions %}
             <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Category</th>
-                <th>Who</th>
-                <th>Account</th>
-                <th>Amount</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Edit</th>
+                <td>
+                    <span class="row-{{ transaction.pk }}">{{ transaction.title }}</span>
+                    <input type="text" value="{{ transaction.title }}" class="row-{{ transaction.pk }} editing" />
+                </td>
+                <td>{{ transaction.type }}</td>
+                <td>
+                    <span class="row-{{ transaction.pk }}">{{ transaction.category.title }}</span>
+                    <input type="text" value="{{ transaction.category.title }}" class="row-{{ transaction.pk }} editing" />
+                </td>
+                <td>{{ transaction.who.username }}</td>
+                <td>{{ transaction.account.name }}</td>
+                <td>
+                    <span class="row-{{ transaction.pk }}">{{ transaction.amount }}</span>
+                    <input type="text" value="{{ transaction.amount }}" class="row-{{ transaction.pk }} editing" />
+                </td>
+                <td>
+                    <span class="row-{{ transaction.pk }}">{{ transaction.description }}</span>
+                    <input type="text" value="{{ transaction.description }}" class="row-{{ transaction.pk }} editing" />
+                </td>
+                <td>{{ transaction.date }}</td>
+                <td>
+                    <button onclick="toggleEdit({{ transaction.pk }})">Edit</button>
+                    <!-- Add the delete functionality here, e.g., using a link to a delete view or AJAX -->
+                    {% comment %} <a href="{% url 'delete_transaction' transaction.pk %}">Delete</a> {% endcomment %}
+                </td>
             </tr>
-            {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.title }}</td>
-                    <td>{{ transaction.type }}</td>
-                    <td>{{ transaction.category.title }}</td>
-                    <td>{{ transaction.who.username }}</td>
-                    <td>{{ transaction.account.name }}</td>
-                    <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.description }}</td>
-                    <td>{{ transaction.date }}</td>
-                    <td><a href="{% url 'edit_transaction' transaction.pk %}">Edit</a></td>
-                </tr>
-            {% endfor %}
-        </table>
-        <div class="pagination">
-            <span class="step-links">
-                {% if transactions.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ transactions.previous_page_number }}">previous</a>
-                {% endif %}
-                <span class="current-page">
-                    Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}.
-                </span>
-                {% if transactions.has_next %}
-                    <a href="?page={{ transactions.next_page_number }}">next</a>
-                    <a href="?page={{ transactions.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
+        {% endfor %}
+    </table>
+    <div class="pagination">
+        <span class="step-links">
+            {% if transactions.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ transactions.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current-page">
+                Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}.
             </span>
-        </div>
-{% endblock %} 
+            {% if transactions.has_next %}
+                <a href="?page={{ transactions.next_page_number }}">next</a>
+                <a href="?page={{ transactions.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

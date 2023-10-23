@@ -1,5 +1,4 @@
 from django.db import models
-
 from users.models import User
 from accounts.models import Account
 
@@ -54,7 +53,7 @@ class Transaction(models.Model):
     author = models.ForeignKey(User,
                                verbose_name='Author',
                                on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True, db_index=True)
+    date = models.DateField()
 
     class Meta:
         ordering = ['-date']
