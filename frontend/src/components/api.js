@@ -31,7 +31,7 @@ export const login = async ({ email, password }) => {
     }
   };
 
-  export const fetchTransactions = () => {
+export const fetchTransactions = () => {
     return fetch(`${BASE_URL}/transaction/`, {
         headers: getHeaders(),
     })
@@ -86,6 +86,34 @@ export const updateExpense = (expenseId, field, newValue) => {
         method: 'PATCH',
         headers: getHeaders(),
         body: JSON.stringify(data)
+    })
+    .then(response => response.json());
+};
+
+export const fetchCategories = () => {
+    return fetch(`${BASE_URL}/category/`, {
+        headers: getHeaders(),
+    })
+    .then(response => response.json());
+};
+
+export const fetchAccounts = () => {
+    return fetch(`${BASE_URL}/account/`, {
+        headers: getHeaders(),
+    })
+    .then(response => response.json());
+};
+
+export const fetchTransactionTypes = () => {
+    return fetch(`${BASE_URL}/transaction-type/`, {
+        headers: getHeaders(),
+    })
+    .then(response => response.json());
+};
+
+export const fetchUsers = () => {
+    return fetch(`${BASE_URL}/users/`, {
+        headers: getHeaders(),
     })
     .then(response => response.json());
 };

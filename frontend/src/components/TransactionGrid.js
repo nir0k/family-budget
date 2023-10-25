@@ -3,11 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { fetchTransactions, deleteTransaction, updateTransaction, createTransaction } from './Api';
+import { fetchTransactions, fetchCategories, fetchAccounts, fetchTransactionTypes, fetchUsers, deleteTransaction, updateTransaction, createTransaction } from './Api';
 
 
 const Transactions = () => {
     const [rowData, setRowData] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+    const [transactionTypes, setTransactionTypes] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         fetchTransactions()
@@ -17,6 +21,18 @@ const Transactions = () => {
             .catch(error => {
                 console.error('Error fetching transactions:', error);
             });
+
+        fetchCategories()
+            .then(data => setCategories(data));
+
+        fetchAccounts()
+            .then(data => setAccounts(data));
+
+        fetchTransactionTypes()
+            .then(data => setTransactionTypes(data));
+
+        fetchUsers()
+            .then(data => setUsers(data));
     }, []);
 
     const removeSelected = () => {
@@ -68,7 +84,7 @@ const Transactions = () => {
         account: '',
         amount: '',
         description: '',
-        author: '',
+        // author: '',
         date: getCurrentDate()
     });
 
@@ -86,7 +102,7 @@ const Transactions = () => {
                 account: '',
                 amount: '',
                 description: '',
-                author: '',
+                // author: '',
                 date: ''
             });
         }).catch(error => {
@@ -104,13 +120,48 @@ const Transactions = () => {
     const originalColumnDefs = [
         { headerCheckboxSelection: true, checkboxSelection: true, width: 50 },
         { headerName: "Title", field: "title", sortable: true, editable: true },
-        { headerName: "Type", field: "type", sortable: true, editable: true },
-        { headerName: "Category", field: "category", sortable: true, editable: true },
-        { headerName: "Who", field: "who", sortable: true, editable: true },
-        { headerName: "Account", field: "account", sortable: true, editable: true },
+        {
+            headerName: "Type",
+            field: "type",
+            sortable: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: transactionTypes.map(type => type.title)
+            }
+        },
+        {
+            headerName: "Category",
+            field: "category",
+            sortable: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: categories.map(cat => cat.title)
+            }
+        },
+        {
+            headerName: "Who",
+            field: "who",
+            sortable: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: users.map(users => users.username)
+            }
+        },
+        {
+            headerName: "Account",
+            field: "account",
+            sortable: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: accounts.map(accounts => accounts.title)
+            }
+        },
         { headerName: "Amount", field: "amount", sortable: true, editable: true, valueFormatter: currencyFormatter },
         { headerName: "Description", field: "description", sortable: true, editable: true },
-        { headerName: "Author", field: "author", sortable: true, editable: true },
         { headerName: "Date", field: "date", sortable: true, editable: true, valueFormatter: dateFormatter }
     ];
 
@@ -130,6 +181,46 @@ const Transactions = () => {
                 <h3>Add Transaction</h3>
                 <form onSubmit={handleSubmit}>
                     {/* ... input fields */}
+                    <div>
+                        <label>Title:</label>
+                        <input value={newTransaction.title} onChange={e => setNewTransaction(prev => ({ ...prev, title: e.target.value }))} />
+                    </div>
+                    <div>
+                        <label>Type:</label>
+                        <select value={newTransaction.type} onChange={e => setNewTransaction(prev => ({ ...prev, type: e.target.value }))}>
+                            {transactionTypes.map(type => <option key={type.id} value={type.title}>{type.title}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Category:</label>
+                        <select value={newTransaction.category} onChange={e => setNewTransaction(prev => ({ ...prev, category: e.target.value }))}>
+                            {categories.map(cat => <option key={cat.id} value={cat.title}>{cat.title}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Who:</label>
+                        <select value={newTransaction.user} onChange={e => setNewTransaction(prev => ({ ...prev, user: e.target.value }))}>
+                            {users.map(user => <option key={user.id} value={user.username}>{user.username}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Account:</label>
+                        <select value={newTransaction.account} onChange={e => setNewTransaction(prev => ({ ...prev, account: e.target.value }))}>
+                            {accounts.map(account => <option key={account.id} value={account.title}>{account.title}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Amount:</label>
+                        <input value={newTransaction.amount} onChange={e => setNewTransaction(prev => ({ ...prev, amount: e.target.value }))} />
+                    </div>
+                    <div>
+                        <label>Description:</label>
+                        <input value={newTransaction.description} onChange={e => setNewTransaction(prev => ({ ...prev, description: e.target.value }))} />
+                    </div>
+                    <div>
+                        <label>Date:</label>
+                        <input type="date" value={newTransaction.date} onChange={e => setNewTransaction(prev => ({ ...prev, date: e.target.value }))} />
+                    </div>
                     <button type="submit">Add</button>
                 </form>
             </div>

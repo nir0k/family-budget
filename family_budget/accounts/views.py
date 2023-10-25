@@ -15,3 +15,4 @@ class Account_TypeViewSet(viewsets.ModelViewSet):
 class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    pagination_class = None
