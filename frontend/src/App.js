@@ -4,22 +4,27 @@ import './App.css';
 import TransactionGrid from './components/TransactionGrid';
 import MainPage from './MainPage';
 import NavigationBar from './components/NavigationBar';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './components/Login';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import BudgetGrid from './components/BudgetGrid';
+import Logout from './components/Logout';
 
 function App() {
-  return (
-      <Router>
-          <div>
-              <NavigationBar />
-              <Routes>
-                  <Route path="/transactions" element={<TransactionGrid />} />
-                  <Route path="/" element={<MainPage />} />
-                  <Route path="/budgets" element={<BudgetGrid />} />
-              </Routes>
-          </div>
-      </Router>
-  );
+    return (
+        <BrowserRouter>
+            <div>
+                <NavigationBar />
+                <Routes>
+                    <Route path="/" element={<MainPage />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/logout" element={<Logout />} />
+                    <Route path="/transactions" element={<TransactionGrid />} />
+                    <Route path="/budget" element={<BudgetGrid />} />
+                    {/* Add other routes as needed */}
+                </Routes>
+            </div>
+        </BrowserRouter>
+    );
 }
 
 export default App;

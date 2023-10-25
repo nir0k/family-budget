@@ -1,22 +1,55 @@
+// components/api.js
+
 const BASE_URL = 'http://localhost:8000/api/v1';
 
-export const fetchTransactions = () => {
-    return fetch(`${BASE_URL}/transaction/`)
-        .then(response => response.json());
+const getHeaders = () => {
+    const authToken = localStorage.getItem('authToken');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': authToken ? authToken : '',
+    };
+};
+
+export const login = async ({ email, password }) => {
+    try {
+      const response = await fetch(`${BASE_URL}/auth/token/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(`Login failed: ${errorResponse.detail}`);
+      }
+  
+      return response.json();
+    } catch (error) {
+      throw new Error(`Login failed: ${error.message}`);
+    }
+  };
+
+  export const fetchTransactions = () => {
+    return fetch(`${BASE_URL}/transaction/`, {
+        headers: getHeaders(),
+    })
+    .then(response => response.json())
+    .then(data => data.results);
 };
 
 export const deleteTransaction = (id) => {
     return fetch(`${BASE_URL}/transaction/${id}/`, {
         method: 'DELETE',
+        headers: getHeaders()
     });
 };
 
 export const updateTransaction = (id, data) => {
     return fetch(`${BASE_URL}/transaction/${id}/`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(data)
     });
 };
@@ -24,60 +57,35 @@ export const updateTransaction = (id, data) => {
 export const createTransaction = (data) => {
     return fetch(`${BASE_URL}/transaction/`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(data)
     }).then(response => response.json());
 };
 
 export const fetchBudgets = () => {
-    return fetch(`${BASE_URL}/budget/`)
-        .then(response => response.json());
+    return fetch(`${BASE_URL}/budget/`, {
+        headers: getHeaders(),
+    })
+    .then(response => response.json())
+    .then(data => data.results);
 };
 
 export const updateBudget = (budgetId, field, newValue) => {
-    // Create the data object based on the field and newValue
     const data = { [field]: newValue };
-
-    // Call your API to update the budget
-    fetch(`${BASE_URL}/budget/${budgetId}/`, {
+    return fetch(`${BASE_URL}/budget/${budgetId}/`, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(data)
     })
-    .then(response => {
-        if (!response.ok) {
-            // Handle any errors here
-        }
-        return response.json();
-    })
-    .then(updatedBudget => {
-        // Optionally, you can update the rowData state to reflect the changes in the UI
-    });
+    .then(response => response.json());
 };
 
 export const updateExpense = (expenseId, field, newValue) => {
-    // Create the data object based on the field and newValue
     const data = { [field]: newValue };
-
-    // Call your API to update the expense
-    fetch(`${BASE_URL}/expenseitem/${expenseId}/`, { // Update this endpoint URL accordingly
+    return fetch(`${BASE_URL}/expenseitem/${expenseId}/`, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders(),
         body: JSON.stringify(data)
     })
-    .then(response => {
-        if (!response.ok) {
-            // Handle any errors here
-        }
-        return response.json();
-    })
-    .then(updatedExpense => {
-        // Optionally, you can update the rowData state to reflect the changes in the UI
-    });
+    .then(response => response.json());
 };

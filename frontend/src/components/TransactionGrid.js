@@ -1,16 +1,22 @@
-// Transactions.js
+// components/TransactionGrid.js
 import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { fetchTransactions, deleteTransaction, updateTransaction, createTransaction } from './api';
+import { fetchTransactions, deleteTransaction, updateTransaction, createTransaction } from './Api';
 
 
 const Transactions = () => {
     const [rowData, setRowData] = useState([]);
 
     useEffect(() => {
-        fetchTransactions().then(data => setRowData(data));
+        fetchTransactions()
+            .then(data => {
+                setRowData(data);
+            })
+            .catch(error => {
+                console.error('Error fetching transactions:', error);
+            });
     }, []);
 
     const removeSelected = () => {
@@ -123,26 +129,17 @@ const Transactions = () => {
             <div>
                 <h3>Add Transaction</h3>
                 <form onSubmit={handleSubmit}>
-                    <input placeholder="Title" value={newTransaction.title} onChange={e => setNewTransaction({ ...newTransaction, title: e.target.value })} />
-                    <input placeholder="Type" value={newTransaction.type} onChange={e => setNewTransaction({ ...newTransaction, type: e.target.value })} />
-                    <input placeholder="Category" value={newTransaction.category} onChange={e => setNewTransaction({ ...newTransaction, category: e.target.value })} />
-                    <input placeholder="Who" value={newTransaction.who} onChange={e => setNewTransaction({ ...newTransaction, who: e.target.value })} />
-                    <input placeholder="Account" value={newTransaction.account} onChange={e => setNewTransaction({ ...newTransaction, account: e.target.value })} />
-                    <input placeholder="Amount" value={newTransaction.amount} onChange={e => setNewTransaction({ ...newTransaction, amount: e.target.value })} />
-                    <input placeholder="Description" value={newTransaction.description} onChange={e => setNewTransaction({ ...newTransaction, description: e.target.value })} />
-                    <input placeholder="Author" value={newTransaction.author} onChange={e => setNewTransaction({ ...newTransaction, author: e.target.value })} />
-                    <input placeholder="Date" value={newTransaction.date} onChange={e => setNewTransaction({ ...newTransaction, date: e.target.value })} />
-                    
+                    {/* ... input fields */}
                     <button type="submit">Add</button>
                 </form>
             </div>
             <div className="ag-theme-alpine-dark" style={{ height: 400, width: '100%' }}>
                 <AgGridReact
-                columnDefs={columnDefs}
-                rowData={rowData}
-                rowSelection="multiple"
-                onGridReady={onGridReady}
-                onCellValueChanged={onCellValueChanged}
+                    columnDefs={columnDefs}
+                    rowData={rowData}
+                    rowSelection="multiple"
+                    onGridReady={onGridReady}
+                    onCellValueChanged={onCellValueChanged}
                 />
             </div>
         </div>

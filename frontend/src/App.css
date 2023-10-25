@@ -1,3 +1,5 @@
+/* App.css */
+
 .App {
   text-align: center;
 }
@@ -43,26 +45,27 @@ body {
 }
 
 .nav-panel {
-  background-color: #333; /* dark background */
-  padding: 1rem 2rem; /* vertical & horizontal padding */
+  background-color: #333;
+  padding: 1rem 2rem;
   display: flex;
-  justify-content: flex-start; /* default alignment to start */
+  justify-content: flex-start;
   align-items: center;
+  justify-content: space-between;
 }
 
 .nav-link {
-  color: #FFF; /* white text */
+  color: #FFF;
   text-decoration: none;
-  margin: 0 1rem; /* spacing between links */
-  padding-bottom: 4px; /* for the underline effect */
-  transition: color 0.3s, border-bottom 0.3s; /* smooth transition on hover */
-  font-size: 1.1rem; /* slightly larger font */
-  font-weight: 500; /* medium font weight */
-  position: relative; /* relative positioning for after pseudo-element */
+  margin: 0 1rem;
+  padding-bottom: 4px;
+  transition: color 0.3s, border-bottom 0.3s;
+  font-size: 1.1rem;
+  font-weight: 500;
+  position: relative;
 }
 
 .nav-link:hover {
-  color: #FFD700; /* gold text on hover */
+  color: #FFD700;
 }
 
 .nav-link::after {
@@ -72,28 +75,66 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #FFD700; /* gold underline */
-  transform: scaleX(0); /* set initial state to 0 width */
+  background-color: #FFD700;
+  transform: scaleX(0);
   transform-origin: right;
-  transition: transform 0.3s; /* smooth expand transition */
+  transition: transform 0.3s;
 }
 
 .nav-link:hover::after {
-  transform: scaleX(1); /* expand underline on hover */
+  transform: scaleX(1);
   transform-origin: left;
 }
 
 .active-link::after {
-  transform: scaleX(1); /* always expanded underline for active link */
+  transform: scaleX(1);
   transform-origin: left;
 }
 
 .nav-links {
   display: flex;
-  gap: 20px; /* gap between links for spacing */
-  margin-left: 20px; /* space between the logo and the links */
+  gap: 20px;
+  margin-left: 20px;
 }
 
 .ag-cell {
-  padding: 4px;  /* Adjust as needed */
+  padding: 4px;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 0 1rem;
+  padding-bottom: 4px;
+  transition: color 0.3s, border-bottom 0.3s;
+  font-size: 1.1rem;
+  font-weight: 500;
+  position: relative;
+  outline: none;
+}
+
+.nav-button:hover {
+  color: #FFD700;
+}
+
+.nav-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #FFD700;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s;
+}
+
+.nav-button:hover::after,
+.nav-button:focus::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
