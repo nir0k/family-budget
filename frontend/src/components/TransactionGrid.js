@@ -173,55 +173,59 @@ const Transactions = () => {
 
     return (
         <div>
-            <div style={{ marginBottom: '10px' }}>
+            {/* <div style={{ marginBottom: '10px' }}>
                 <button onClick={removeSelected}>Remove Selected</button>
-                {/* ... other buttons as needed */}
-            </div>
-            <div>
+            </div> */}
+            <div className="form-container">
                 <h3>Add Transaction</h3>
                 <form onSubmit={handleSubmit}>
                     {/* ... input fields */}
-                    <div>
+                    <div className="form-group">
                         <label>Title:</label>
                         <input value={newTransaction.title} onChange={e => setNewTransaction(prev => ({ ...prev, title: e.target.value }))} />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Type:</label>
                         <select value={newTransaction.type} onChange={e => setNewTransaction(prev => ({ ...prev, type: e.target.value }))}>
                             {transactionTypes.map(type => <option key={type.id} value={type.title}>{type.title}</option>)}
                         </select>
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Category:</label>
                         <select value={newTransaction.category} onChange={e => setNewTransaction(prev => ({ ...prev, category: e.target.value }))}>
                             {categories.map(cat => <option key={cat.id} value={cat.title}>{cat.title}</option>)}
                         </select>
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Who:</label>
                         <select value={newTransaction.user} onChange={e => setNewTransaction(prev => ({ ...prev, user: e.target.value }))}>
                             {users.map(user => <option key={user.id} value={user.username}>{user.username}</option>)}
                         </select>
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Account:</label>
                         <select value={newTransaction.account} onChange={e => setNewTransaction(prev => ({ ...prev, account: e.target.value }))}>
                             {accounts.map(account => <option key={account.id} value={account.title}>{account.title}</option>)}
                         </select>
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Amount:</label>
                         <input value={newTransaction.amount} onChange={e => setNewTransaction(prev => ({ ...prev, amount: e.target.value }))} />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Description:</label>
                         <input value={newTransaction.description} onChange={e => setNewTransaction(prev => ({ ...prev, description: e.target.value }))} />
                     </div>
-                    <div>
+                    <div className="form-group">
                         <label>Date:</label>
                         <input type="date" value={newTransaction.date} onChange={e => setNewTransaction(prev => ({ ...prev, date: e.target.value }))} />
                     </div>
-                    <button type="submit">Add</button>
+                    <div className="button-container">
+                        <button type="submit">Add</button>
+                    </div>
+                    <div className="button-remove">
+                        <button onClick={removeSelected}>Remove Selected</button>
+                    </div>
                 </form>
             </div>
             <div className="ag-theme-alpine-dark" style={{ height: 400, width: '100%' }}>

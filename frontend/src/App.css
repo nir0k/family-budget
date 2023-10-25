@@ -138,3 +138,36 @@ body {
   transform: scaleX(1);
   transform-origin: left;
 }
+
+.form-container {
+  width: 50%;
+  margin-right: auto;
+}
+
+.form-group {
+  display: flex;
+  margin-bottom: 5px;
+  width: 60%;
+  margin-right: 0 auto;
+}
+
+.form-group label {
+  width: 100px;
+  margin-right: 10px;
+  text-align: left;
+}
+
+.form-group input,
+.form-group select {
+  flex: 1;
+}
+
+.button-container {
+  text-align: right;
+  width: 60%;
+}
+
+.button-remove {
+  text-align: left;
+  width: 60%;
+}
