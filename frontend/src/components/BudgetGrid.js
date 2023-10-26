@@ -8,6 +8,25 @@ import { fetchBudgets, updateBudget, updateExpense } from './Api';
 const BudgetGrid = () => {
     const [rowData, setRowData] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState(null);
+    const expenseRowStyle = (params) => {
+        if (params.data.expense > params.data.amount) {
+            return { backgroundColor: '#E97451' }; 
+        }
+        if (params.data.expense < params.data.amount) {
+            return { backgroundColor: '#5F8575' }; 
+        }
+        return {};
+    };
+    const budgetRowStyle = (params) => {
+        if (params.data.total_expense > params.data.total_amount) {
+            return { backgroundColor: '#E97451' }; 
+        }
+        if (params.data.total_expense < params.data.total_amount) {
+            return { backgroundColor: '#5F8575' }; 
+        }
+        return {};
+    };
+    
 
     useEffect(() => {
         fetchBudgets().then(data => {
@@ -16,17 +35,20 @@ const BudgetGrid = () => {
     }, []);
 
     const budgetColumns = [
-        { headerName: "Title", field: "title", editable: true },
-        { headerName: "Start Date", field: "start_date", editable: true },
-        { headerName: "End Date", field: "end_date", editable: true },
-        { headerName: "Total Budget", field: "total_budget", editable: true }
+        { headerName: "Title", field: "title", editable: true, flex: 1},
+        { headerName: "Start Date", field: "start_date", editable: true, flex: 1 },
+        { headerName: "End Date", field: "end_date", editable: true, flex: 1 },
+        { headerName: "Total Budget", field: "total_budget", editable: true, flex: 1 },
+        { headerName: "Total Amount", field: "total_amount", editable: true, flex: 1 },
+        { headerName: "Total Expense", field: "total_expense", editable: true, flex: 1 },
     ];
 
     const expenseColumns = [
-        { headerName: "Description", field: "description", editable: true },
-        { headerName: "Category", field: "category", editable: true },
-        { headerName: "Budget", field: "budget", editable: true },
-        { headerName: "Amount", field: "amount", editable: true }
+        { headerName: "Category", field: "category", editable: true, flex: 1 },
+        { headerName: "Budget", field: "budget", editable: true, flex: 1 },
+        { headerName: "Amount", field: "amount", editable: true, flex: 1 },
+        { headerName: "Expense", field: "expense", editable: true, flex: 1 },
+        { headerName: "Description", field: "description", editable: true, flex: 1 },
     ];
 
     const handleBudgetChange = (event) => {
@@ -56,6 +78,7 @@ const BudgetGrid = () => {
                     domLayout='autoHeight'
                     onRowClicked={e => setSelectedBudget(e.data)}
                     onCellValueChanged={handleBudgetChange}
+                    getRowStyle={budgetRowStyle}
                 />
             </div>
 
@@ -67,6 +90,7 @@ const BudgetGrid = () => {
                         columnDefs={expenseColumns}
                         domLayout='autoHeight'
                         onCellValueChanged={handleExpenseChange}
+                        getRowStyle={expenseRowStyle}
                     />
                 </div>
             )}
