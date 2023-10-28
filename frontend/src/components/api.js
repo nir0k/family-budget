@@ -31,12 +31,11 @@ export const login = async ({ email, password }) => {
     }
   };
 
-export const fetchTransactions = () => {
-    return fetch(`${BASE_URL}/transaction/`, {
+export const fetchTransactions = (page = 1) => {
+    return fetch(`${BASE_URL}/transaction/?page=${page}`, {
         headers: getHeaders(),
     })
-    .then(response => response.json())
-    .then(data => data.results);
+    .then(response => response.json());
 };
 
 export const deleteTransaction = (id) => {

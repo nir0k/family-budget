@@ -12,28 +12,91 @@ const Transactions = () => {
     const [accounts, setAccounts] = useState([]);
     const [transactionTypes, setTransactionTypes] = useState([]);
     const [users, setUsers] = useState([]);
+    const [gridApi, setGridApi] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [nextPageUrl, setNextPageUrl] = useState(null);
+    const [prevPageUrl, setPrevPageUrl] = useState(null);
+
+    const getCurrentDate = () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const [newTransaction, setNewTransaction] = useState({
+        title: '',
+        type: '',
+        category: '',
+        who: '',
+        account: '',
+        amount: '',
+        description: '',
+        date: getCurrentDate()
+    });
 
     useEffect(() => {
-        fetchTransactions()
-            .then(data => {
-                setRowData(data);
-            })
-            .catch(error => {
-                console.error('Error fetching transactions:', error);
+        const fetchPageData = () => {
+            Promise.all([
+                fetchTransactions(currentPage),
+                fetchCategories(),
+                fetchAccounts(),
+                fetchTransactionTypes(),
+                fetchUsers()
+            ]).then(([transactionsData, categoriesData, accountsData, types, usersData]) => {
+                setRowData(transactionsData.results);
+                setCategories(categoriesData);
+                setAccounts(accountsData);
+                setTransactionTypes(types);
+                setUsers(usersData);
+                setNextPageUrl(transactionsData.next);
+                setPrevPageUrl(transactionsData.previous);
+                setTotalPages(Math.ceil(transactionsData.count / 50));  
+    
+                setNewTransaction(prev => ({
+                    ...prev,
+                    type: types[0]?.id,
+                    category: categoriesData[0]?.id,
+                    who: usersData[0]?.id,
+                    account: accountsData[0]?.id
+                }));
+            }).catch(error => {
+                console.error('Error fetching data:', error);
             });
+        };
+    
+        fetchPageData();
+    }, [currentPage]);
 
-        fetchCategories()
-            .then(data => setCategories(data));
+    const handleNextPage = () => {
+        if (nextPageUrl) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+    
+    const handlePrevPage = () => {
+        if (prevPageUrl) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
-        fetchAccounts()
-            .then(data => setAccounts(data));
+    const handleTypeChange = (e) => {
+        setNewTransaction(prev => ({ ...prev, type: parseInt(e.target.value) }));
+    }
+    
+    const handleCategoryChange = (e) => {
+        setNewTransaction(prev => ({ ...prev, category: parseInt(e.target.value) }));
+    }
+    
+    const handleWhoChange = (e) => {
+        setNewTransaction(prev => ({ ...prev, who: parseInt(e.target.value) }));
+    }
 
-        fetchTransactionTypes()
-            .then(data => setTransactionTypes(data));
-
-        fetchUsers()
-            .then(data => setUsers(data));
-    }, []);
+    const handleAccountChange = (e) => {
+        setNewTransaction(prev => ({ ...prev, account: parseInt(e.target.value) }));
+    }
 
     const removeSelected = () => {
         const selectedNodes = gridApi.getSelectedNodes();
@@ -51,16 +114,8 @@ const Transactions = () => {
 
     const dateFormatter = (params) => {
         let dateObj = new Date(params.value);
-        return dateObj.toLocaleDateString();  // Format: MM/DD/YYYY
+        return dateObj.toLocaleDateString();
     }
-
-    const getCurrentDate = () => {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
 
     const onCellValueChanged = (params) => {
         const id = params.data.id;
@@ -76,42 +131,36 @@ const Transactions = () => {
         });
     };
 
-    const [newTransaction, setNewTransaction] = useState({
-        title: '',
-        type: '',
-        category: '',
-        who: '',
-        account: '',
-        amount: '',
-        description: '',
-        // author: '',
-        date: getCurrentDate()
-    });
-
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!newTransaction.who) {
+            console.error('Who field is required!');
+            return;
+        }
+
         createTransaction(newTransaction).then(data => {
             if (gridApi) {
                 gridApi.applyTransaction({ add: [data] });
             }
             setNewTransaction({
                 title: '',
-                type: '',
-                category: '',
-                who: '',
-                account: '',
+                type: transactionTypes[0]?.id,
+                category: categories[0]?.id,
+                who: users[0]?.id,
+                account: accounts[0]?.id,
                 amount: '',
                 description: '',
-                // author: '',
-                date: ''
+                date: getCurrentDate()
             });
         }).catch(error => {
             console.error('Error adding new transaction:', error);
+            if (error.response && error.response.data) {
+                console.error('Backend error:', error.response.data.message);
+            }
         });
     };
     
-    const [gridApi, setGridApi] = useState(null);
-
     const onGridReady = params => {
         setGridApi(params.api);
         params.api.sizeColumnsToFit();
@@ -127,7 +176,11 @@ const Transactions = () => {
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: transactionTypes.map(type => type.title)
+                values: transactionTypes.map(type => type.id)
+            },
+            valueFormatter: params => {
+                const type = transactionTypes.find(t => t.id === params.value);
+                return type ? type.title : '';
             }
         },
         {
@@ -137,7 +190,11 @@ const Transactions = () => {
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: categories.map(cat => cat.title)
+                values: categories.map(cat => cat.id)
+            },
+            valueFormatter: params => {
+                const cat = categories.find(c => c.id === params.value);
+                return cat ? cat.title : '';
             }
         },
         {
@@ -147,7 +204,11 @@ const Transactions = () => {
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: users.map(users => users.username)
+                values: users.map(user => user.id)
+            },
+            valueFormatter: params => {
+                const user = users.find(user => user.id === params.value);
+                return user ? user.username : '';
             }
         },
         {
@@ -157,7 +218,11 @@ const Transactions = () => {
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: accounts.map(accounts => accounts.title)
+                values: accounts.map(account => account.id)
+            },
+            valueFormatter: params => {
+                const account = accounts.find(account => account.id === params.value);
+                return account ? account.title : '';
             }
         },
         { headerName: "Amount", field: "amount", sortable: true, editable: true, valueFormatter: currencyFormatter },
@@ -173,39 +238,36 @@ const Transactions = () => {
 
     return (
         <div>
-            {/* <div style={{ marginBottom: '10px' }}>
-                <button onClick={removeSelected}>Remove Selected</button>
-            </div> */}
             <div className="form-container">
                 <h3>Add Transaction</h3>
                 <form onSubmit={handleSubmit}>
-                    {/* ... input fields */}
                     <div className="form-group">
                         <label>Title:</label>
                         <input value={newTransaction.title} onChange={e => setNewTransaction(prev => ({ ...prev, title: e.target.value }))} />
                     </div>
                     <div className="form-group">
                         <label>Type:</label>
-                        <select value={newTransaction.type} onChange={e => setNewTransaction(prev => ({ ...prev, type: e.target.value }))}>
-                            {transactionTypes.map(type => <option key={type.id} value={type.title}>{type.title}</option>)}
+                        <select value={newTransaction.type} onChange={handleTypeChange}>
+                            <option value="">Select a type</option>
+                            {transactionTypes.map(type => <option key={type.id} value={type.id}>{type.title}</option>)}
                         </select>
                     </div>
                     <div className="form-group">
                         <label>Category:</label>
-                        <select value={newTransaction.category} onChange={e => setNewTransaction(prev => ({ ...prev, category: e.target.value }))}>
-                            {categories.map(cat => <option key={cat.id} value={cat.title}>{cat.title}</option>)}
+                        <select value={newTransaction.category} onChange={handleCategoryChange}>
+                            {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.title}</option>)}
                         </select>
                     </div>
                     <div className="form-group">
                         <label>Who:</label>
-                        <select value={newTransaction.user} onChange={e => setNewTransaction(prev => ({ ...prev, user: e.target.value }))}>
-                            {users.map(user => <option key={user.id} value={user.username}>{user.username}</option>)}
+                        <select value={newTransaction.who} onChange={handleWhoChange}>
+                            {users.map(user => <option key={user.id} value={user.id}>{user.username}</option>)}
                         </select>
                     </div>
                     <div className="form-group">
                         <label>Account:</label>
-                        <select value={newTransaction.account} onChange={e => setNewTransaction(prev => ({ ...prev, account: e.target.value }))}>
-                            {accounts.map(account => <option key={account.id} value={account.title}>{account.title}</option>)}
+                        <select value={newTransaction.account} onChange={handleAccountChange}>
+                            {accounts.map(account => <option key={account.id} value={account.id}>{account.title}</option>)}
                         </select>
                     </div>
                     <div className="form-group">
@@ -224,7 +286,8 @@ const Transactions = () => {
                         <button type="submit">Add</button>
                     </div>
                     <div className="button-remove">
-                        <button onClick={removeSelected}>Remove Selected</button>
+                        <button type="button" onClick={removeSelected}>Remove Selected</button>
+                        {/* <button onClick={removeSelected}>Remove Selected</button> */}
                     </div>
                 </form>
             </div>
@@ -236,6 +299,11 @@ const Transactions = () => {
                     onGridReady={onGridReady}
                     onCellValueChanged={onCellValueChanged}
                 />
+            </div>
+            <div>
+                <button onClick={handlePrevPage} disabled={!prevPageUrl}>Previous</button>
+                <span>Page {currentPage} of {totalPages}</span>
+                <button onClick={handleNextPage} disabled={!nextPageUrl}>Next</button>
             </div>
         </div>
     );

@@ -48,8 +48,8 @@ class Transaction(models.Model):
                             related_name='who_expense',
                             on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
-    description = models.CharField(max_length=256)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    description = models.CharField(max_length=256, blank=True, null=True)
     author = models.ForeignKey(User,
                                verbose_name='Author',
                                on_delete=models.CASCADE)
