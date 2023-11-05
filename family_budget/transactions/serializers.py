@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
 from .models import Transaction, Transaction_Type, Category
+from currency.models import Currency
+from currency.convector import update_rates_for_date, get_rate_for_date
+# from currency.convector import update_rates, convert_amount
+# , update_rates_for_date, get_rate_for_date
 
 
 class Transaction_TypeSerializer(serializers.ModelSerializer):
@@ -40,8 +44,19 @@ class TransactionSerializer(serializers.ModelSerializer):
             'who',
             'account',
             'amount',
+            'currency',
             'description',
             'author',
             'date',
         )
         read_only_fields = ('author',)
+
+    def create(self, validated_data):
+        currency = validated_data['currency']
+        if currency.code != 'HUF':
+            update_rates_for_date(validated_data['date'])
+            huf_currency = Currency.objects.get(code='HUF')
+            converted_amount = get_rate_for_date(
+                validated_data['amount'], huf_currency, currency)
+            validated_data['amount'] = converted_amount
+        return super().create(validated_data)

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'transactions.apps.TransactionsConfig',
     'budget.apps.BudgetConfig',
+    'currency.apps.CurrencyConfig',
 ]
 
 MIDDLEWARE = [

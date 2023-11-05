@@ -1,17 +1,39 @@
 from django.contrib import admin
-from budget.models import Budget, ExpenseItem
+from budget.models import Budget, ExpenseItem, Family, IncomeItem
 
 
 class ExpenseItemInline(admin.TabularInline):
     model = ExpenseItem
-    extra = 1
+    extra = 0
+
+
+class IncomeItemInline(admin.TabularInline):
+    model = IncomeItem
+    extra = 0
+
+
+class FamilyMemberInline(admin.TabularInline):
+    model = Family.members.through
+    extra = 0
+
+
+class FamilyAdmin(admin.ModelAdmin):
+    inlines = [FamilyMemberInline]
+    list_display = ('id', 'title')
+    exclude = ('members',)
 
 
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'start_date', 'end_date', 'total_budget')
+    list_display = ('id',
+                    'title',
+                    'start_date',
+                    'end_date',
+                    'family',
+                    'total_budget')
     list_display_links = ('id', 'title')
     empty_value_display = '-empty-'
-    inlines = [ExpenseItemInline]
+    inlines = [IncomeItemInline, ExpenseItemInline]
 
 
 admin.site.register(Budget, BudgetAdmin)
+admin.site.register(Family, FamilyAdmin)

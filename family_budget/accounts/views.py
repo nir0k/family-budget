@@ -10,6 +10,7 @@ from .serializers import (
 class Account_TypeViewSet(viewsets.ModelViewSet):
     queryset = Account_Type.objects.all()
     serializer_class = Account_TypeSerializer
+    pagination_class = None
 
 
 class AccountViewSet(viewsets.ModelViewSet):

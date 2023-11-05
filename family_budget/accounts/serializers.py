@@ -3,6 +3,7 @@ from django.db.models import Sum
 from .models import Account, Account_Type
 from transactions.models import Transaction, Transaction_Type
 from users.models import User
+# from currency.models import Currency
 
 
 class Account_TypeSerializer(serializers.ModelSerializer):
@@ -19,8 +20,6 @@ class AccountSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['type'] = Transaction_Type.objects.get(
-            id=representation['type']).title
         representation['owner'] = User.objects.get(
             id=representation['owner']).username
         return representation
@@ -32,6 +31,7 @@ class AccountSerializer(serializers.ModelSerializer):
             'title',
             'type',
             'value',
+            'currency',
             'created',
             'owner',
             'current_balance',

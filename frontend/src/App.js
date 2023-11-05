@@ -8,6 +8,7 @@ import Login from './components/Login';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import BudgetGrid from './components/BudgetGrid';
 import Logout from './components/Logout';
+import AccountsPage from './components/AccountsPage';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/transactions" element={<TransactionGrid />} />
                     <Route path="/budget" element={<BudgetGrid />} />
+                    <Route path="/accounts" element={<AccountsPage />} />
                     {/* Add other routes as needed */}
                 </Routes>
             </div>

@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from accounts.models import Account
+from currency.models import Currency
 
 TRANSACTION_TYPE = [
     ('+', 'Income'),
@@ -49,6 +50,7 @@ class Transaction(models.Model):
                             on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     description = models.CharField(max_length=256, blank=True, null=True)
     author = models.ForeignKey(User,
                                verbose_name='Author',

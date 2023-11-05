@@ -9,6 +9,7 @@ const MainPage = () => {
             <ul>
                 <li><Link to="/transactions">Go to Transactions</Link></li>
                 <li><Link to="/budget">Go to Budget</Link></li>
+                <li><Link to="/accounts">Go to Accounts</Link></li>
                 {/* Add other links here as needed */}
             </ul>
         </div>

@@ -3,7 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { fetchTransactions, fetchCategories, fetchAccounts, fetchTransactionTypes, fetchUsers, deleteTransaction, updateTransaction, createTransaction } from './Api';
+import { 
+    fetchTransactions,
+    fetchCategories,
+    fetchAccounts,
+    fetchTransactionTypes,
+    fetchUsers,
+    deleteTransaction,
+    updateTransaction,
+    createTransaction,
+    fetchCurrencies
+} from './Api';
 
 
 const Transactions = () => {
@@ -17,6 +27,19 @@ const Transactions = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [nextPageUrl, setNextPageUrl] = useState(null);
     const [prevPageUrl, setPrevPageUrl] = useState(null);
+    const [currencies, setCurrencies] = useState([]);
+    useEffect(() => {
+        const getCurrencies = async () => {
+            try {
+                const data = await fetchCurrencies();
+                setCurrencies(data);
+            } catch (error) {
+                console.error('Error fetching currencies:', error);
+            }
+        };
+
+        getCurrencies();
+    }, []);
 
     const getCurrentDate = () => {
         const date = new Date();
@@ -150,6 +173,7 @@ const Transactions = () => {
                 who: users[0]?.id,
                 account: accounts[0]?.id,
                 amount: '',
+                currency: currencies[0]?.id || '',
                 description: '',
                 date: getCurrentDate()
             });
@@ -226,6 +250,20 @@ const Transactions = () => {
             }
         },
         { headerName: "Amount", field: "amount", sortable: true, editable: true, valueFormatter: currencyFormatter },
+        {
+            headerName: "Currency",
+            field: "currency",
+            sortable: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: currencies.map(currency => currency.id)
+            },
+            valueFormatter: params => {
+                const currency = currencies.find(curr => curr.id === params.value);
+                return currency ? currency.code : '';
+            }
+        },
         { headerName: "Description", field: "description", sortable: true, editable: true },
         { headerName: "Date", field: "date", sortable: true, editable: true, valueFormatter: dateFormatter }
     ];
@@ -234,7 +272,6 @@ const Transactions = () => {
         ...col,
         cellStyle: { textAlign: 'left' }
     }));
-
 
     return (
         <div>
@@ -273,6 +310,12 @@ const Transactions = () => {
                     <div className="form-group">
                         <label>Amount:</label>
                         <input value={newTransaction.amount} onChange={e => setNewTransaction(prev => ({ ...prev, amount: e.target.value }))} />
+                    </div>
+                    <div className="form-group">
+                        <label>Currency:</label>
+                        <select value={newTransaction.currency} onChange={e => setNewTransaction(prev => ({ ...prev, currency: parseInt(e.target.value) }))}>
+                            {currencies.map(currency => <option key={currency.id} value={currency.id}>{currency.title}</option>)}
+                        </select>
                     </div>
                     <div className="form-group">
                         <label>Description:</label>

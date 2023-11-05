@@ -1,6 +1,7 @@
 from django.db import models
 
 from users.models import User
+from currency.models import Currency
 
 
 class Account_Type(models.Model):
@@ -22,6 +23,7 @@ class Account(models.Model):
     value = models.DecimalField(max_digits=20,
                                 decimal_places=2,
                                 verbose_name="start value")
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 

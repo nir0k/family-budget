@@ -22,12 +22,15 @@ class Transaction_TypeAdmin(admin.ModelAdmin):
 class TransactionAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'title', 'type', 'category', 'who',
-        'account', 'amount', 'author', 'date'
+        'account', 'amount', 'currency', 'author', 'date'
     )
     list_display_links = ('id', 'title')
-    search_fields = ('id', 'title', 'category', 'date')
+    search_fields = (
+        'id', 'title', 'category', 'date', 'currency'
+    )
     list_filter = (
-        'type', 'category', 'who', 'account', 'author', 'date'
+        'type', 'category', 'who', 'account',
+        'author', 'date', 'currency'
     )
     empty_value_display = '-empty-'
 

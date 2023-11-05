@@ -1,9 +1,53 @@
 from rest_framework import serializers
-from .models import Budget, ExpenseItem
-from users.models import User
+from .models import Budget, ExpenseItem, Family, IncomeItem
 from transactions.models import Category, Transaction, Transaction_Type
 from django.db.models import Sum
 from django.db import models
+
+
+class FamilySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Family
+        fields = (
+            'id',
+            'title',
+            'members',
+        )
+
+
+class IncometemSerializer(serializers.ModelSerializer):
+    budget = serializers.StringRelatedField()
+    income = serializers.SerializerMethodField()
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['category'] = Category.objects.get(
+            id=representation['category']).title
+        return representation
+
+    class Meta:
+        model = IncomeItem
+        fields = (
+            'id',
+            'description',
+            'category',
+            'budget',
+            'amount',
+            'income',
+        )
+
+    def get_income(self, obj) -> float:
+        family = obj.budget.family
+        family_members = family.members.all()
+        expense = Transaction.objects.filter(
+            who__in=family_members,
+            type__in=Transaction_Type.objects.filter(type="+"),
+            category=obj.category,
+            date__gte=obj.budget.start_date,
+            date__lte=obj.budget.end_date
+        ).aggregate(Sum('amount'))["amount__sum"]
+
+        return float(expense or 0)
 
 
 class ExpenseItemSerializer(serializers.ModelSerializer):
@@ -28,25 +72,28 @@ class ExpenseItemSerializer(serializers.ModelSerializer):
         )
 
     def get_expense(self, obj) -> float:
+        family = obj.budget.family
+        family_members = family.members.all()
         expense = Transaction.objects.filter(
-            who=self.context['request'].user,
+            who__in=family_members,
             type__in=Transaction_Type.objects.filter(type="-"),
             category=obj.category,
             date__gte=obj.budget.start_date,
             date__lte=obj.budget.end_date
         ).aggregate(Sum('amount'))["amount__sum"]
+
         return float(expense or 0)
 
 
 class BudgetSerializer(serializers.ModelSerializer):
     expense_items = ExpenseItemSerializer(many=True, required=False)
     total_expense = serializers.SerializerMethodField()
-    total_amount = serializers.SerializerMethodField() 
+    total_amount = serializers.SerializerMethodField()
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['user'] = User.objects.get(
-            id=representation['user']).username
+        representation['family'] = Family.objects.get(
+            id=representation['family']).title
         return representation
 
     class Meta:
@@ -58,9 +105,9 @@ class BudgetSerializer(serializers.ModelSerializer):
             'end_date',
             'total_budget',
             'expense_items',
-            'user',
             'total_expense',
             'total_amount',
+            'family'
         )
         read_only_fields = ('user',)
 

@@ -96,12 +96,26 @@ export const fetchCategories = () => {
     .then(response => response.json());
 };
 
-export const fetchAccounts = () => {
-    return fetch(`${BASE_URL}/account/`, {
+
+export const fetchAccounts = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/account/`, {
         headers: getHeaders(),
-    })
-    .then(response => response.json());
-};
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(`Fetching accounts failed: ${errorResponse.detail}`);
+      }
+  
+      return response.json();
+    } catch (error) {
+      throw new Error(`Fetching accounts failed: ${error.message}`);
+    }
+  };
+
+
+
 
 export const fetchTransactionTypes = () => {
     return fetch(`${BASE_URL}/transaction-type/`, {
@@ -115,4 +129,99 @@ export const fetchUsers = () => {
         headers: getHeaders(),
     })
     .then(response => response.json());
+};
+
+export const fetchIncomeItems = () => {
+    return fetch(`${BASE_URL}/incomeitem/`, {
+        headers: getHeaders(),
+    })
+    .then(response => response.json())
+    .then(data => data.results);
+};
+
+export const fetchCurrencies = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/currency/`, {
+            headers: getHeaders(),
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching currencies:', error);
+        throw error;
+    }
+};
+
+export const createAccount = async (accountData) => {
+    try {
+        const response = await fetch(`${BASE_URL}/account/`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(accountData),
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Creating account failed: ${errorResponse.detail}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        throw new Error(`Creating account failed: ${error.message}`);
+    }
+};
+
+export const deleteAccount = async (id) => {
+    try {
+        const response = await fetch(`${BASE_URL}/account/${id}/`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Deleting account failed: ${errorResponse.detail}`);
+        }
+
+        return response;
+    } catch (error) {
+        throw new Error(`Deleting account failed: ${error.message}`);
+    }
+};
+
+export const updateAccount = async (id, accountData) => {
+    try {
+        const response = await fetch(`${BASE_URL}/account/${id}/`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(accountData),
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Updating account failed: ${errorResponse.detail}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        throw new Error(`Updating account failed: ${error.message}`);
+    }
+};
+
+export const fetchAccountTypes = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/account-type/`, {
+            headers: getHeaders(),
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Fetching account types failed: ${errorResponse.detail}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching account types:', error);
+        throw error;
+    }
 };
