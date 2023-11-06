@@ -2,8 +2,6 @@ from rest_framework import serializers
 from django.db.models import Sum
 from .models import Account, Account_Type
 from transactions.models import Transaction, Transaction_Type
-from users.models import User
-# from currency.models import Currency
 
 
 class Account_TypeSerializer(serializers.ModelSerializer):
@@ -17,12 +15,6 @@ class Account_TypeSerializer(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
     current_balance = serializers.SerializerMethodField()
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['owner'] = User.objects.get(
-            id=representation['owner']).username
-        return representation
 
     class Meta:
         model = Account

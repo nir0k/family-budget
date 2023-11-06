@@ -5,7 +5,7 @@ from .serializers import (
     Transaction_TypeSerializer,
     CategorySerializer
 )
-from users.permissions import IsAdmin, IsUser
+from users.permissions import IsAdmin, IsUser, IsAuth
 from rest_condition import Or
 
 
@@ -29,4 +29,4 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = None
-    permission_classes = (Or(IsUser, IsAdmin),)
+    permission_classes = (IsAuth,)

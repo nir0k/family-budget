@@ -1,6 +1,5 @@
 // components/AccountsPage.js
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -11,6 +10,7 @@ import {
   updateAccount,
   fetchAccountTypes,
   fetchCurrencies,
+  fetchUsers,
 } from './Api';
 
 const AccountsPage = () => {
@@ -18,6 +18,7 @@ const AccountsPage = () => {
   const [accountTypes, setAccountTypes] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [currencies, setCurrencies] = useState([]);
+  const [users, setUsers] = useState([]);
   const [newAccountData, setNewAccountData] = useState({
     title: '',
     type: '',
@@ -33,6 +34,8 @@ const AccountsPage = () => {
       setAccountTypes(types);
       const fetchedCurrencies = await fetchCurrencies();
       setCurrencies(fetchedCurrencies);
+      const fetchedUsers = await fetchUsers();
+      setUsers(fetchedUsers);
     };
     getAccountTypesAndCurrencies();
   }, []);
@@ -72,7 +75,15 @@ const AccountsPage = () => {
         return currency ? currency.code : params.value;
       },
     },
-    { headerName: "Owner", field: "owner", editable: true },
+    {
+      headerName: "Owner",
+      field: "owner",
+      valueFormatter: (params) => {
+        const user = users.find(user => user.id === params.value);
+        return user ? user.username : params.value;
+      },
+      editable: true,
+    },
     { headerName: "Start Value", field: "value", editable: true },
   ];
 
@@ -98,14 +109,24 @@ const AccountsPage = () => {
     onCellEditingStopped: onCellEditingStopped,
   };
 
-  const loadAccounts = async () => {
+  const loadAccounts = useCallback(async () => {
     const accountsData = await fetchAccounts();
-    setRowData(accountsData);
-  };
+    const userMap = {};
+    users.forEach(user => {
+      userMap[user.id] = user.username;
+    });
+  
+    const accountsWithUsernames = accountsData.map(account => ({
+      ...account,
+      owner: userMap[account.owner] || account.owner,
+    }));
+  
+    setRowData(accountsWithUsernames);
+  }, [users]);
 
   useEffect(() => {
     loadAccounts();
-  }, []);
+  }, [loadAccounts]);  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -114,10 +135,16 @@ const AccountsPage = () => {
 
   const handleCreateAccount = async (e) => {
     e.preventDefault();
-    await createAccount(newAccountData);
+    const ownerUser = users.find(user => user.username === newAccountData.owner);
+    const accountDataWithOwnerId = {
+      ...newAccountData,
+      owner: ownerUser ? ownerUser.id : null,
+    };
+    await createAccount(accountDataWithOwnerId);
     loadAccounts();
     setNewAccountData({ title: '', type: '', currency: '', owner: '', value: '' });
   };
+  
 
   const handleDeleteAccounts = async () => {
     for (const account of selectedRows) {
@@ -161,13 +188,18 @@ const AccountsPage = () => {
             </option>
           ))}
         </select>
-        <input
-          type="text"
+        <select
           name="owner"
-          placeholder="Owner"
           value={newAccountData.owner}
           onChange={handleInputChange}
-        />
+        >
+          <option value="">Select Owner</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.username}>
+              {user.username}
+            </option>
+          ))}
+        </select>
         <input
           type="number"
           name="value"
@@ -180,7 +212,7 @@ const AccountsPage = () => {
       <button onClick={handleDeleteAccounts} disabled={selectedRows.length === 0}>
         Delete Selected Account(s)
       </button>
-      <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+      <div className="ag-theme-alpine-dark" style={{ height: '500px', width: '100%' }}>
         <AgGridReact
           ref={gridRef}
           rowData={rowData}

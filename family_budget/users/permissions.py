@@ -20,7 +20,6 @@ class IsAdmin(permissions.BasePermission):
 
 
 class IsUser(permissions.BasePermission):
-
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
@@ -35,6 +34,16 @@ class IsUser(permissions.BasePermission):
             if request.user == obj.author:
                 return True
             return False
+        return True
+
+
+class IsAuth(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+        return True
+
+    def has_object_permission(self, request, view, obj):
         return True
 
 
