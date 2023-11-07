@@ -2,6 +2,7 @@ from django.db import models
 from transactions.models import Category
 from django.core.exceptions import ValidationError
 from users.models import User
+from currency.models import Currency
 
 
 class Family(models.Model):
@@ -18,6 +19,7 @@ class Budget(models.Model):
     end_date = models.DateField()
     total_budget = models.DecimalField(max_digits=10, decimal_places=2)
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         is_new = not self.pk
@@ -66,10 +68,13 @@ class IncomeItem(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
-        limit_choices_to={'type__type': '+'},
+        limit_choices_to={'type__type': '+'}
+    )
+    budget = models.ForeignKey(
+        Budget,
+        on_delete=models.CASCADE,
         related_name="income_items"
     )
-    budget = models.ForeignKey(Budget, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=255, null=True, blank=True)
 

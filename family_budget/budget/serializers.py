@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import Budget, ExpenseItem, Family, IncomeItem
 from transactions.models import Category, Transaction, Transaction_Type
-from django.db.models import Sum
 from django.db import models
+from currency.convector import get_rate_for_date
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class FamilySerializer(serializers.ModelSerializer):
@@ -15,7 +16,7 @@ class FamilySerializer(serializers.ModelSerializer):
         )
 
 
-class IncometemSerializer(serializers.ModelSerializer):
+class IncomeItemSerializer(serializers.ModelSerializer):
     budget = serializers.StringRelatedField()
     income = serializers.SerializerMethodField()
 
@@ -37,17 +38,38 @@ class IncometemSerializer(serializers.ModelSerializer):
         )
 
     def get_income(self, obj) -> float:
+        budget_currency = obj.budget.currency
         family = obj.budget.family
         family_members = family.members.all()
-        expense = Transaction.objects.filter(
+        expenses = Transaction.objects.filter(
             who__in=family_members,
             type__in=Transaction_Type.objects.filter(type="+"),
             category=obj.category,
             date__gte=obj.budget.start_date,
             date__lte=obj.budget.end_date
-        ).aggregate(Sum('amount'))["amount__sum"]
+        )
 
-        return float(expense or 0)
+        total_expense_in_huf = Decimal(0)
+
+        for expense in expenses:
+            if expense.currency != budget_currency:
+                rate = get_rate_for_date(
+                    from_currency=budget_currency,
+                    to_currency=expense.currency,
+                    date=expense.date
+                )
+                if rate is not None:
+                    rate = Decimal(rate)
+                    total_expense_in_huf += expense.amount / rate
+                else:
+                    # Handle the case where the rate is not found
+                    pass
+            else:
+                total_expense_in_huf += expense.amount
+
+        result = total_expense_in_huf.quantize(
+            Decimal('0.01'), rounding=ROUND_HALF_UP)
+        return float(result)
 
 
 class ExpenseItemSerializer(serializers.ModelSerializer):
@@ -72,23 +94,46 @@ class ExpenseItemSerializer(serializers.ModelSerializer):
         )
 
     def get_expense(self, obj) -> float:
+        budget_currency = obj.budget.currency
         family = obj.budget.family
         family_members = family.members.all()
-        expense = Transaction.objects.filter(
+        expenses = Transaction.objects.filter(
             who__in=family_members,
             type__in=Transaction_Type.objects.filter(type="-"),
             category=obj.category,
             date__gte=obj.budget.start_date,
             date__lte=obj.budget.end_date
-        ).aggregate(Sum('amount'))["amount__sum"]
+        )
 
-        return float(expense or 0)
+        total_expense_in_huf = Decimal(0)
+
+        for expense in expenses:
+            if expense.currency != budget_currency:
+                rate = get_rate_for_date(
+                    from_currency=budget_currency,
+                    to_currency=expense.currency,
+                    date=expense.date
+                )
+                if rate is not None:
+                    rate = Decimal(rate)
+                    total_expense_in_huf += expense.amount / rate
+                else:
+                    # Handle the case where the rate is not found
+                    pass
+            else:
+                total_expense_in_huf += expense.amount
+
+        result = total_expense_in_huf.quantize(
+            Decimal('0.01'), rounding=ROUND_HALF_UP)
+        return float(result)
 
 
 class BudgetSerializer(serializers.ModelSerializer):
     expense_items = ExpenseItemSerializer(many=True, required=False)
+    income_items = IncomeItemSerializer(many=True, required=False)
     total_expense = serializers.SerializerMethodField()
     total_amount = serializers.SerializerMethodField()
+    currency = serializers.StringRelatedField()
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -105,9 +150,11 @@ class BudgetSerializer(serializers.ModelSerializer):
             'end_date',
             'total_budget',
             'expense_items',
+            'income_items',
             'total_expense',
             'total_amount',
-            'family'
+            'family',
+            'currency',
         )
         read_only_fields = ('user',)
 

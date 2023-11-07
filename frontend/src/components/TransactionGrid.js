@@ -20,6 +20,7 @@ const Transactions = () => {
     const [rowData, setRowData] = useState([]);
     const [categories, setCategories] = useState([]);
     const [accounts, setAccounts] = useState([]);
+    const [filteredAccounts, setFilteredAccounts] = useState([]);
     const [transactionTypes, setTransactionTypes] = useState([]);
     const [users, setUsers] = useState([]);
     const [gridApi, setGridApi] = useState(null);
@@ -113,9 +114,23 @@ const Transactions = () => {
         setNewTransaction(prev => ({ ...prev, category: parseInt(e.target.value) }));
     }
     
+    // const handleWhoChange = (e) => {
+    //     setNewTransaction(prev => ({ ...prev, who: parseInt(e.target.value) }));
+    // }
+
     const handleWhoChange = (e) => {
-        setNewTransaction(prev => ({ ...prev, who: parseInt(e.target.value) }));
-    }
+        const userId = parseInt(e.target.value);
+        setNewTransaction(prev => ({ ...prev, who: userId }));
+        // Filter accounts based on selected user
+        const filtered = accounts.filter(account => account.owner === userId);
+        setFilteredAccounts(filtered);
+        // If the current selected account is not owned by the new user, reset it
+        if (!filtered.find(account => account.id === newTransaction.account)) {
+            setNewTransaction(prev => ({ ...prev, account: '' }));
+        }
+    };
+
+
 
     const handleAccountChange = (e) => {
         setNewTransaction(prev => ({ ...prev, account: parseInt(e.target.value) }));
@@ -304,7 +319,9 @@ const Transactions = () => {
                     <div className="form-group">
                         <label>Account:</label>
                         <select value={newTransaction.account} onChange={handleAccountChange}>
-                            {accounts.map(account => <option key={account.id} value={account.id}>{account.title}</option>)}
+                            {filteredAccounts.map(account => (
+                                <option key={account.id} value={account.id}>{account.title}</option>
+                            ))}
                         </select>
                     </div>
                     <div className="form-group">

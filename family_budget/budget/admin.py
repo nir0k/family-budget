@@ -29,7 +29,9 @@ class BudgetAdmin(admin.ModelAdmin):
                     'start_date',
                     'end_date',
                     'family',
-                    'total_budget')
+                    'total_budget',
+                    'currency'
+                    )
     list_display_links = ('id', 'title')
     empty_value_display = '-empty-'
     inlines = [IncomeItemInline, ExpenseItemInline]

@@ -4,7 +4,7 @@ from .serializers import (
     BudgetSerializer,
     ExpenseItemSerializer,
     FamilySerializer,
-    IncometemSerializer
+    IncomeItemSerializer
 )
 from users.permissions import IsUser
 
@@ -31,7 +31,7 @@ class ExpenseItemViewSet(viewsets.ModelViewSet):
 
 class IncomeItemViewSet(viewsets.ModelViewSet):
     queryset = IncomeItem.objects.all()
-    serializer_class = IncometemSerializer
+    serializer_class = IncomeItemSerializer
     permission_classes = [IsUser]
 
 

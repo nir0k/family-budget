@@ -3,12 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { fetchBudgets, updateBudget, updateExpense, fetchIncomeItems } from './Api';
+import { fetchBudgets, updateBudget, updateExpense } from './Api';
 
 const BudgetGrid = () => {
     const [rowData, setRowData] = useState([]);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const [incomeItems, setIncomeItems] = useState([]);
     const financialFormatter = (params) => {
         const value = parseFloat(params.value);
         return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
@@ -37,11 +36,6 @@ const BudgetGrid = () => {
     useEffect(() => {
         fetchBudgets().then(data => {
             setRowData(data);
-        });
-    }, []);
-    useEffect(() => {
-        fetchIncomeItems().then(data => {
-            setIncomeItems(data);
         });
     }, []);
 
@@ -112,8 +106,15 @@ const BudgetGrid = () => {
             flex: 1,
             cellRenderer: financialFormatter
         },
-        { headerName: "Description", field: "description", editable: true, flex: 1 },
-        { headerName: "Budget", field: "budget", editable: true, flex: 1 }
+        { 
+            headerName: "Income",
+            field: "income", 
+            editable: true,
+            flex: 1, 
+            cellRenderer: financialFormatter,
+            headerTooltip: "This column displays the total money expenced for the category"
+        },
+        { headerName: "Description", field: "description", editable: true, flex: 1 }
     ];
 
     const handleBudgetChange = (event) => {
@@ -151,7 +152,7 @@ const BudgetGrid = () => {
             {selectedBudget && (
                 <div className="ag-theme-alpine-dark" style={{ height: '250px', width: '100%' }}>
                     <AgGridReact
-                        rowData={incomeItems}
+                        rowData={selectedBudget.income_items}
                         columnDefs={incomeColumns}
                         domLayout='autoHeight'
                     />
