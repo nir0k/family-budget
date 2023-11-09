@@ -1,7 +1,6 @@
+from currency.models import Currency
 from django.core.exceptions import ValidationError
 from django.db import models
-
-from currency.models import Currency
 from transactions.models import Category
 from users.models import User
 

@@ -1,6 +1,5 @@
 from django.db.models import Sum
 from rest_framework import serializers
-
 from transactions.models import Transaction, Transaction_Type
 
 from .models import Account, Account_Type

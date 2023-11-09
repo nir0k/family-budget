@@ -1,7 +1,6 @@
-from django.db import models
-
 from accounts.models import Account
 from currency.models import Currency
+from django.db import models
 from users.models import User
 
 TRANSACTION_TYPE = [
