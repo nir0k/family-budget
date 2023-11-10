@@ -33,10 +33,8 @@ DEBUG = os.getenv('DEBUG_VALUE', 'FALSE').upper() == 'TRUE'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost 127.0.0.1').split(' ')
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://127.0.0.1:3000',
+    'http://127.0.0.1',
+    'http://192.168.1.97'
 ]
 
 # Application definition
