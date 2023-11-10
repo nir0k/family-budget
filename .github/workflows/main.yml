@@ -66,6 +66,8 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
+      - name: List files in frontend/src/components
+        run: ls -la ./frontend/src/components
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Login to Docker 
