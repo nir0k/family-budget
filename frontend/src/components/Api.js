@@ -1,5 +1,5 @@
 // components/Api.js
-const BASE_URL = 'http://localhost:8000/api/v1';
+const BASE_URL = process.env.API_URL || 'http://localhost:8000/api/v1';
 
 const getHeaders = () => {
     const authToken = localStorage.getItem('authToken');
