@@ -113,24 +113,16 @@ const Transactions = () => {
     const handleCategoryChange = (e) => {
         setNewTransaction(prev => ({ ...prev, category: parseInt(e.target.value) }));
     }
-    
-    // const handleWhoChange = (e) => {
-    //     setNewTransaction(prev => ({ ...prev, who: parseInt(e.target.value) }));
-    // }
 
     const handleWhoChange = (e) => {
         const userId = parseInt(e.target.value);
         setNewTransaction(prev => ({ ...prev, who: userId }));
-        // Filter accounts based on selected user
         const filtered = accounts.filter(account => account.owner === userId);
         setFilteredAccounts(filtered);
-        // If the current selected account is not owned by the new user, reset it
         if (!filtered.find(account => account.id === newTransaction.account)) {
             setNewTransaction(prev => ({ ...prev, account: '' }));
         }
     };
-
-
 
     const handleAccountChange = (e) => {
         setNewTransaction(prev => ({ ...prev, account: parseInt(e.target.value) }));
@@ -207,10 +199,11 @@ const Transactions = () => {
 
     const originalColumnDefs = [
         { headerCheckboxSelection: true, checkboxSelection: true, width: 50 },
-        { headerName: "Title", field: "title", sortable: true, editable: true },
+        { headerName: "Title", field: "title", minWidth: 150, sortable: true, editable: true },
         {
             headerName: "Type",
             field: "type",
+            minWidth: 100,
             sortable: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
@@ -225,6 +218,7 @@ const Transactions = () => {
         {
             headerName: "Category",
             field: "category",
+            minWidth: 150,
             sortable: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
@@ -239,6 +233,7 @@ const Transactions = () => {
         {
             headerName: "Who",
             field: "who",
+            minWidth: 80,
             sortable: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
@@ -253,6 +248,7 @@ const Transactions = () => {
         {
             headerName: "Account",
             field: "account",
+            minWidth: 150,
             sortable: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
@@ -264,10 +260,11 @@ const Transactions = () => {
                 return account ? account.title : '';
             }
         },
-        { headerName: "Amount", field: "amount", sortable: true, editable: true, valueFormatter: currencyFormatter },
+        { headerName: "Amount", field: "amount", minWidth: 120, sortable: true, editable: true, valueFormatter: currencyFormatter },
         {
             headerName: "Currency",
             field: "currency",
+            minWidth: 80,
             sortable: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
@@ -279,8 +276,8 @@ const Transactions = () => {
                 return currency ? currency.code : '';
             }
         },
-        { headerName: "Description", field: "description", sortable: true, editable: true },
-        { headerName: "Date", field: "date", sortable: true, editable: true, valueFormatter: dateFormatter }
+        { headerName: "Date", minWidth: 120, field: "date", sortable: true, editable: true, valueFormatter: dateFormatter },
+        { headerName: "Description", minWidth: 100 , field: "description", sortable: true, editable: true }
     ];
 
     const columnDefs = originalColumnDefs.map(col => ({
@@ -347,7 +344,6 @@ const Transactions = () => {
                     </div>
                     <div className="button-remove">
                         <button type="button" onClick={removeSelected}>Remove Selected</button>
-                        {/* <button onClick={removeSelected}>Remove Selected</button> */}
                     </div>
                 </form>
             </div>

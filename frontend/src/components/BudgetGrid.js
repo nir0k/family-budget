@@ -40,12 +40,13 @@ const BudgetGrid = () => {
     }, []);
 
     const budgetColumns = [
-        { headerName: "Title", field: "title", editable: true, flex: 1},
-        { headerName: "Start Date", field: "start_date", editable: true, flex: 1 },
-        { headerName: "End Date", field: "end_date", editable: true, flex: 1 },
+        { headerName: "Title", field: "title", minWidth: 150, editable: true, flex: 1},
+        { headerName: "Start Date", field: "start_date", minWidth: 120, editable: true, flex: 1 },
+        { headerName: "End Date", field: "end_date", minWidth: 120, editable: true, flex: 1 },
         { 
             headerName: "Family",
             field: "family",
+            minWidth: 150,
             editable: true,
             flex: 1,
             headerTooltip: "This column displays the family associated with the budget."
@@ -53,6 +54,7 @@ const BudgetGrid = () => {
         { 
             headerName: "Total Budget",
             field: "total_budget",
+            minWidth: 150,
             editable: true,
             flex: 1,
             cellRenderer: financialFormatter,
@@ -61,6 +63,7 @@ const BudgetGrid = () => {
         { 
             headerName: "Total Amount",
             field: "total_amount",
+            minWidth: 150,
             editable: true,
             flex: 1,
             cellRenderer: financialFormatter,
@@ -69,10 +72,19 @@ const BudgetGrid = () => {
         { 
             headerName: "Total Expense",
             field: "total_expense",
+            minWidth: 150,
             editable: true,
             flex: 1,
             cellRenderer: financialFormatter,
             headerTooltip: "This column displays the total money expensed for the budget for all categories."
+        },
+        { 
+            headerName: "Currency",
+            field: "currency",
+            minWidth: 80,
+            editable: true,
+            flex: 1,
+            headerTooltip: "This column displays the currency used for the budget."
         },
     ];
 
@@ -81,6 +93,7 @@ const BudgetGrid = () => {
         { 
             headerName: "Amount",
             field: "amount",
+            minWidth: 150,
             editable: true,
             flex: 1,
             cellRenderer: financialFormatter,
@@ -89,12 +102,13 @@ const BudgetGrid = () => {
         { 
             headerName: "Expense",
             field: "expense", 
+            minWidth: 150,
             editable: true,
             flex: 1, 
             cellRenderer: financialFormatter,
             headerTooltip: "This column displays the total money expenced for the category"
         },
-        { headerName: "Description", field: "description", editable: true, flex: 1 },
+        { headerName: "Description", field: "description", minWidth: 150, editable: true, flex: 1 },
     ];
 
     const incomeColumns = [
@@ -102,6 +116,7 @@ const BudgetGrid = () => {
         { 
             headerName: "Amount",
             field: "amount",
+            minWidth: 150,
             editable: true,
             flex: 1,
             cellRenderer: financialFormatter
@@ -109,12 +124,13 @@ const BudgetGrid = () => {
         { 
             headerName: "Income",
             field: "income", 
+            minWidth: 150,
             editable: true,
             flex: 1, 
             cellRenderer: financialFormatter,
             headerTooltip: "This column displays the total money expenced for the category"
         },
-        { headerName: "Description", field: "description", editable: true, flex: 1 }
+        { headerName: "Description", minWidth: 150, field: "description", editable: true, flex: 1 }
     ];
 
     const handleBudgetChange = (event) => {

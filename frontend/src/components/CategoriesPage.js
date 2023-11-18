@@ -95,7 +95,6 @@ const CategoriesPage = () => {
             }
         } catch (error) {
             console.error('Updating category failed:', error);
-            // Handle the error according to your needs
         }
     }, [categories]);
 
@@ -116,12 +115,14 @@ const CategoriesPage = () => {
         {
           headerName: 'Title',
           field: 'title',
+          minWidth: 250,
           checkboxSelection: true,
           headerCheckboxSelection: true
         },
         {
           headerName: 'Type',
           field: 'type',
+          minWidth: 60,
           valueFormatter: params =>
             transactionTypes.find(type => type.id === params.value)?.title || ''
         }
@@ -139,7 +140,7 @@ const CategoriesPage = () => {
                 <button onClick={handleAddCategory}>Add Category</button>
             </div>
             <button onClick={handleDeleteCategories}>Delete Selected Categories</button>
-            <div className="ag-theme-alpine" style={{ margin: '20px auto', height: tableHeight, width: '80%' }}>
+            <div className="ag-theme-alpine-dark" style={{ margin: '20px auto', height: tableHeight, width: '80%' }}>
                 <AgGridReact
                     rowData={categories}
                     columnDefs={columnDefs}

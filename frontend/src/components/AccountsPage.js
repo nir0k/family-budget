@@ -47,10 +47,11 @@ const AccountsPage = () => {
       headerCheckboxSelection: true,
       width: 50,
     },
-    { headerName: "Title", field: "title", editable: true },
+    { headerName: "Title", minWidth: 150, field: "title", editable: true },
     {
       headerName: "Type",
       field: "type",
+      minWidth: 80,
       editable: true,
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
@@ -61,10 +62,11 @@ const AccountsPage = () => {
         return type ? type.title : params.value;
       },
     },
-    { headerName: "Current Balance", field: "current_balance" },
+    { headerName: "Current Balance", minWidth: 150, field: "current_balance" },
     {
       headerName: "Currency",
       field: "currency",
+      minWidth: 80,
       editable: true,
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
@@ -78,13 +80,14 @@ const AccountsPage = () => {
     {
       headerName: "Owner",
       field: "owner",
+      minWidth: 100,
       valueFormatter: (params) => {
         const user = users.find(user => user.id === params.value);
         return user ? user.username : params.value;
       },
       editable: true,
     },
-    { headerName: "Start Value", field: "value", editable: true },
+    { headerName: "Start Value", field: "value", minWidth: 150, editable: true },
   ];
 
   const onSelectionChanged = () => {
