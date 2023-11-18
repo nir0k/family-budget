@@ -1,7 +1,7 @@
 from currency.models import Currency
 from django.core.exceptions import ValidationError
 from django.db import models
-from transactions.models import Category
+from transactions.models import Category, Transaction_Type
 from users.models import User
 
 
@@ -26,8 +26,13 @@ class Budget(models.Model):
         super(Budget, self).save(*args, **kwargs)
 
         if is_new:
-            for category in Category.objects.all():
+            expensetype = Transaction_Type.objects.get(type='-')
+            incometype = Transaction_Type.objects.get(type='+')
+            for category in Category.objects.filter(type=expensetype):
                 ExpenseItem.objects.create(
+                    category=category, budget=self, amount=0)
+            for category in Category.objects.filter(type=incometype):
+                IncomeItem.objects.create(
                     category=category, budget=self, amount=0)
 
         overlapping_budgets = Budget.objects.filter(
