@@ -22,7 +22,7 @@ def current_balance(obj) -> float:
         type__in=Transaction_Type.objects.filter(type="-")
     ).aggregate(Sum('amount'))["amount__sum"]
 
-    return float(income or 0) - float(expense or 0)
+    return (float(obj.value or 0) + float(income or 0) - float(expense or 0))
 
 
 class Account_TypeSerializer(serializers.ModelSerializer):
