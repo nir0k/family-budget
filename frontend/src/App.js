@@ -10,6 +10,7 @@ import BudgetGrid from './components/BudgetGrid';
 import Logout from './components/Logout';
 import AccountsPage from './components/AccountsPage';
 import CategoriesPage from './components/CategoriesPage';
+import FamilyFinanceState from './components/FamilyFinanceState';
 
 function App() {
     return (
@@ -24,7 +25,7 @@ function App() {
                     <Route path="/budget" element={<BudgetGrid />} />
                     <Route path="/accounts" element={<AccountsPage />} />
                     <Route path="/categories" element={<CategoriesPage />} />
-                    {/* Add other routes as needed */}
+                    <Route path="/family-finance-state" element={<FamilyFinanceState />} />
                 </Routes>
             </div>
         </BrowserRouter>

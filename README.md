@@ -4,6 +4,19 @@
 - Account: Not work edit exists accounts
 - Category: Not work edit exists categories
 
+## Need add:
+- Backend:
+    - Auto choice currency for card
+    - Add choice main account for user
+    - Add endpoint for get user account state
+    - Add endpoint for get family finance state
+
+- Frontend:
+    - add check for transaction succesfully added (exist problem with wrong date)
+    - page for view account state by user 
+    - page for view family finance state
+
+
 
 ## Load initial data
 ```bash

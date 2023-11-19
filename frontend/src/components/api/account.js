@@ -91,3 +91,20 @@ export const fetchAccountTypes = async () => {
         throw error;
     }
 };
+
+export const fetchFamilyState = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/family-state/`, {
+            headers: getHeaders(),
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Fetching family state failed: ${errorResponse.detail}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        throw new Error(`Fetching family state failed: ${error.message}`);
+    }
+};

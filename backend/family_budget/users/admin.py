@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from users.models import User
 
@@ -34,8 +33,6 @@ class UserChangeForm(forms.ModelForm):
     the user, but replaces the password field with admin's
     disabled password hash display field.
     """
-
-    password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = User
@@ -79,6 +76,7 @@ class UserAdmin(BaseUserAdmin):
                 )
             },
         ),
+        ('Password management', {'fields': ('password',)}),
     )
     add_fieldsets = (
         (
@@ -101,6 +99,11 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('username',)
     ordering = ('username',)
     filter_horizontal = ()
+
+    def save_model(self, request, obj, form, change):
+        if 'password' in form.changed_data:
+            obj.set_password(form.cleaned_data['password'])
+        super().save_model(request, obj, form, change)
 
 
 admin.site.register(User, UserAdmin)
