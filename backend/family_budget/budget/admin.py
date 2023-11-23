@@ -1,5 +1,6 @@
-from budget.models import Budget, ExpenseItem, Family, IncomeItem
 from django.contrib import admin
+
+from budget.models import Budget, ExpenseItem, Family, IncomeItem
 
 
 class ExpenseItemInline(admin.TabularInline):

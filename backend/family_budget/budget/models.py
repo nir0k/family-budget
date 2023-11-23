@@ -1,6 +1,7 @@
-from currency.models import Currency
 from django.core.exceptions import ValidationError
 from django.db import models
+
+from currency.models import Currency
 from transactions.models import Category, Transaction_Type
 from users.models import User
 
@@ -8,6 +9,9 @@ from users.models import User
 class Family(models.Model):
     title = models.CharField(max_length=150)
     members = models.ManyToManyField(User, related_name="families")
+
+    class Meta:
+        ordering = ['title']
 
     def __str__(self):
         return self.title

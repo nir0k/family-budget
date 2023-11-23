@@ -74,3 +74,21 @@ class NonAuth(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_anonymous:
             return False
+
+
+class IsFamilymember(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+        if request.user.role == 'user':
+            return True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.method == 'PATCH' or request.method == 'DELETE':
+            if request.user in obj.members.all():
+                return True
+            return False
+        return True

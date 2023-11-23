@@ -1,5 +1,6 @@
-from currency.models import Currency
 from django.db import models
+
+from currency.models import Currency
 from users.models import User
 
 
@@ -19,12 +20,10 @@ class Account(models.Model):
     type = models.ForeignKey(Account_Type,
                              verbose_name="Type",
                              on_delete=models.CASCADE)
-    value = models.DecimalField(max_digits=20,
-                                decimal_places=2,
-                                verbose_name="start value")
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=20, decimal_places=2, default=0)
 
     class Meta:
         ordering = ["-created"]

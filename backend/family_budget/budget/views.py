@@ -1,5 +1,6 @@
 from rest_framework import viewsets
-from users.permissions import IsUser
+
+from users.permissions import IsFamilymember, IsUser
 
 from .models import Budget, ExpenseItem, Family, IncomeItem
 from .serializers import (BudgetSerializer, ExpenseItemSerializer,
@@ -35,4 +36,4 @@ class IncomeItemViewSet(viewsets.ModelViewSet):
 class FamilyViewSet(viewsets.ModelViewSet):
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
-    permission_classes = [IsUser]
+    permission_classes = [IsFamilymember]

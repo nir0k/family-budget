@@ -11,9 +11,10 @@ class CurrencyAdmin(admin.ModelAdmin):
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'title', 'type', 'currency', 'value', 'created', 'owner')
-    list_display_links = ('id', 'title', 'type', 'value', 'created', 'owner')
-    search_fields = ('title', 'type', 'value', 'created', 'owner')
+        'id', 'title', 'type', 'currency', 'created', 'owner',
+        'balance')
+    list_display_links = ('id', 'title', 'type', 'created', 'owner')
+    search_fields = ('title', 'type', 'created', 'owner')
     list_filter = ('type', 'created', 'owner')
     empty_value_display = '-empty-'
 

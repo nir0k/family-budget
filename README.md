@@ -10,6 +10,12 @@
     - Add choice main account for user
     - Add endpoint for get user account state
     - Add endpoint for get family finance state
+    - Add function transfer
+    - Add rigth to edit family for admin
+    - Add test for api budget
+    - Add test for api transactions
+    - Add test for api user
+    - Add test for currency convector
 
 - Frontend:
     - add check for transaction succesfully added (exist problem with wrong date)

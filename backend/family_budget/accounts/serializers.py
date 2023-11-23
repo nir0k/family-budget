@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 
-from budget.models import Budget, Family
-from currency.convector import get_rate_for_date
 from django.db.models import Sum
 from rest_framework import serializers
+
+from budget.models import Budget, Family
+from currency.convector import get_rate_for_date
 from transactions.models import Transaction, Transaction_Type
 
 from .models import Account, Account_Type
@@ -35,7 +36,6 @@ class Account_TypeSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    current_balance = serializers.SerializerMethodField()
 
     class Meta:
         model = Account
@@ -43,15 +43,11 @@ class AccountSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'type',
-            'value',
             'currency',
             'created',
             'owner',
-            'current_balance',
+            'balance',
         )
-
-    def get_current_balance(self, obj) -> float:
-        return current_balance(obj)
 
 
 class FamilyFinStateSerializer(serializers.ModelSerializer):
@@ -73,7 +69,7 @@ class FamilyFinStateSerializer(serializers.ModelSerializer):
             member_accounts = Account.objects.filter(owner=member)
             member_balance = 0
             for member_account in member_accounts:
-                balance = current_balance(member_account)
+                balance = member_account.balance
                 if member_account.currency != budget_currency:
                     rate = get_rate_for_date(
                         from_currency=budget_currency,

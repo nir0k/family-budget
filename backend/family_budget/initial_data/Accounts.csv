@@ -1,18 +1,18 @@
-title,type,value,currency,owner
-Raif,Card,0,HUF,Olga
-Raif RU,Card,0,RUB,Olga
-Revolut,Card,0,HUF,Olga
-Wise,Card,0,HUF,Olga
-Kaspi,Card,0,KZT,Olga
-Haluk,Card,0,KZT,Olga
-Tinkoff,Card,0,RUB,Olga
-Wallet,Cash,0,HUF,Olga
-Wallet,Cash,0,HUF,Ivan
-Raif RU,Card,0,RUB,Ivan
-VTB,Card,0,RUB,Ivan
-Tinkoff,Card,0,RUB,Ivan
-Kaspi,Card,0,KZT,Ivan
-FreeDom RUB,Card,0,RUB,Ivan
-FreeDom KZT,Card,0,KZT,Ivan
-FreeDom USD,Card,0,USD,Ivan
-FreeDom EUR,Card,0,EUR,Ivan
+title,type,currency,owner
+Raif,Card,HUF,Olga
+Raif RU,Card,RUB,Olga
+Revolut,Card,HUF,Olga
+Wise,Card,HUF,Olga
+Kaspi,Card,KZT,Olga
+Haluk,Card,KZT,Olga
+Tinkoff,Card,RUB,Olga
+Wallet,Cash,HUF,Olga
+Wallet,Cash,HUF,Ivan
+Raif RU,Card,RUB,Ivan
+VTB,Card,RUB,Ivan
+Tinkoff,Card,RUB,Ivan
+Kaspi,Card,KZT,Ivan
+FreeDom RUB,Card,RUB,Ivan
+FreeDom KZT,Card,KZT,Ivan
+FreeDom USD,Card,USD,Ivan
+FreeDom EUR,Card,EUR,Ivan
