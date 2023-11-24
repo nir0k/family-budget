@@ -34,9 +34,11 @@ class ApiFamilyTest(APITestCase):
     def test_Family(self):
         data = {
             'title': 'Amazing Family',
-            'members': [1, 2]
+            'members': [self.user1.id, self.user2.id]
         }
         response = self.auth_client.post(self.url, data)
+        print(f'user1: {self.user1.id}, '
+              f'user2: {self.user2.id}, user3: {self.user3.id}')
         print(f'self.url: {self.url}')
         print(f'data: {data}')
         print(f'response: {response}')
@@ -62,7 +64,7 @@ class ApiFamilyTest(APITestCase):
 
         data = {
             'title': 'Amazing Family2',
-            'members': [1, 3]
+            'members': [self.user1.id, self.user3.id]
         }
         url = self.url + f'{id}/'
         response = self.auth_client.patch(url, data)
@@ -79,7 +81,7 @@ class ApiFamilyTest(APITestCase):
 
         data = {
             'title': 'Amazing Family',
-            'members': [1]
+            'members': [self.user1.id]
         }
         response = self.auth_client.put(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK,
