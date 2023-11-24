@@ -22,11 +22,11 @@ class AccountBalanceTest(TestCase):
             password="P@ssw0rd1"
         )
         self.t_type_expense = Transaction_Type.objects.create(
-            title="Expense", type="Expense")
+            title="Expense", type="-")
         self.t_type_income = Transaction_Type.objects.create(
-            title="Income", type="Income")
+            title="Income", type="+")
         self.t_type_transfer = Transaction_Type.objects.create(
-            title="Transfer", type="Transef")
+            title="Transfer", type="=")
         self.category_expense = Category.objects.create(
             title="Food", type=Transaction_Type.objects.get(title="Expense"))
         self.category_income = Category.objects.create(
