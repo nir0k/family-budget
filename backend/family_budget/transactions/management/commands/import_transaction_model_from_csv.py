@@ -1,4 +1,5 @@
 import csv
+from decimal import Decimal
 
 from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,6 +7,7 @@ from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 
 from transactions.models import Category, Transaction_Type
+import time
 
 
 class Command(BaseCommand):
@@ -46,6 +48,7 @@ class Command(BaseCommand):
                     self.import_category(model, row)
                 else:
                     self.import_other(model, row, fields)
+                time.sleep(1)
 
         self.stdout.write(self.style.SUCCESS('Data imported successfully'))
 
@@ -53,7 +56,7 @@ class Command(BaseCommand):
         try:
             transaction_data = {
                 'title': row['title'],
-                'amount': row['amount'],
+                'amount': Decimal(row['amount']),
                 'description': row['description'],
                 'date': row['date']
             }

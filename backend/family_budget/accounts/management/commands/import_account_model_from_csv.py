@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
         model_fields_mapping = {
             'Account_Type': ['title'],
-            'Account': ['title', 'value', 'currency', 'owner', 'type']
+            'Account': ['title', 'currency', 'owner', 'type']
         }
 
         fields = model_fields_mapping[model_name]
@@ -50,7 +50,6 @@ class Command(BaseCommand):
 
                         model_data = {
                             'title': row['title'],
-                            'value': row['value'],
                             'type': account_type,
                             'owner': owner,
                             'currency': currency,
