@@ -1,4 +1,5 @@
 import csv
+import time
 from decimal import Decimal
 
 from django.apps import apps
@@ -7,7 +8,6 @@ from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 
 from transactions.models import Category, Transaction_Type
-import time
 
 
 class Command(BaseCommand):
