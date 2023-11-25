@@ -37,13 +37,6 @@ class ApiFamilyTest(APITestCase):
             'members': [self.user1.id, self.user2.id]
         }
         response = self.auth_client.post(self.url, data)
-        print(f'user1: {self.user1.id}, '
-              f'user2: {self.user2.id}, user3: {self.user3.id}')
-        print(f'self.url: {self.url}')
-        print(f'data: {data}')
-        print(f'response: {response}')
-        print(f'response code: {response.status_code}')
-        print(f'response data: {response.data}')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED,
                          'Response code should be 201')
         id = response.data['id']

@@ -50,12 +50,18 @@ const Transactions = () => {
         return `${year}-${month}-${day}`;
     };
 
+    const getTypeTitleById = (typeId) => {
+        const type = transactionTypes.find(t => t.id === typeId);
+        return type ? type.title : '';
+      };
+
     const [newTransaction, setNewTransaction] = useState({
         title: '',
         type: '',
         category: '',
         who: '',
         account: '',
+        account_to: '',
         amount: '',
         description: '',
         date: getCurrentDate()
@@ -124,8 +130,14 @@ const Transactions = () => {
         }
     };
 
+
+
     const handleAccountChange = (e) => {
         setNewTransaction(prev => ({ ...prev, account: parseInt(e.target.value) }));
+    }
+
+    const handleAccountToChange = (e) => {
+        setNewTransaction(prev => ({ ...prev, account_to: parseInt(e.target.value) }));
     }
 
     const removeSelected = () => {
@@ -260,6 +272,21 @@ const Transactions = () => {
                 return account ? account.title : '';
             }
         },
+        {
+            headerName: "Account To",
+            field: "account_to",
+            minWidth: 150,
+            sortable: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: accounts.map(account => account.id)
+            },
+            valueFormatter: params => {
+                const account = accounts.find(account => account.id === params.value);
+                return account ? account.title : '';
+            }
+        },        
         { headerName: "Amount", field: "amount", minWidth: 120, sortable: true, editable: true, valueFormatter: currencyFormatter },
         {
             headerName: "Currency",
@@ -294,11 +321,19 @@ const Transactions = () => {
                         <label>Title:</label>
                         <input value={newTransaction.title} onChange={e => setNewTransaction(prev => ({ ...prev, title: e.target.value }))} />
                     </div>
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label>Type:</label>
                         <select value={newTransaction.type} onChange={handleTypeChange}>
                             <option value="">Select a type</option>
                             {transactionTypes.map(type => <option key={type.id} value={type.id}>{type.title}</option>)}
+                        </select>
+                    </div> */}
+                    <div className="form-group">
+                        <label>Type:</label>
+                        <select value={newTransaction.type} onChange={handleTypeChange}>
+                        {transactionTypes.map(type => (
+                            <option key={type.id} value={type.id}>{type.title}</option>
+                        ))}
                         </select>
                     </div>
                     <div className="form-group">
@@ -321,6 +356,18 @@ const Transactions = () => {
                             ))}
                         </select>
                     </div>
+                    {getTypeTitleById(newTransaction.type) === 'Transfer' && (
+                        <div className="form-group">
+                            <label>Account To:</label>
+                            <select 
+                                value={newTransaction.account_to}
+                                onChange={handleAccountToChange}>
+                                {filteredAccounts.map(account => (
+                                    <option key={account.id} value={account.id}>{account.title}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     <div className="form-group">
                         <label>Amount:</label>
                         <input value={newTransaction.amount} onChange={e => setNewTransaction(prev => ({ ...prev, amount: e.target.value }))} />
@@ -344,6 +391,7 @@ const Transactions = () => {
                     </div>
                     <div className="button-remove">
                         <button type="button" onClick={removeSelected}>Remove Selected</button>
+                        {/* <button onClick={removeSelected}>Remove Selected</button> */}
                     </div>
                 </form>
             </div>

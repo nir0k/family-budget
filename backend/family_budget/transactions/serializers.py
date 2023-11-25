@@ -42,7 +42,6 @@ class TransactionSerializer(serializers.ModelSerializer):
             'description',
             'author',
             'date',
-            'account_from',
             'account_to',
         )
         read_only_fields = ('author',)

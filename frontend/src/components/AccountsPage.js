@@ -62,7 +62,7 @@ const AccountsPage = () => {
         return type ? type.title : params.value;
       },
     },
-    { headerName: "Current Balance", minWidth: 150, field: "current_balance" },
+    { headerName: "Current Balance", minWidth: 150, field: "balance" },
     {
       headerName: "Currency",
       field: "currency",
@@ -86,8 +86,7 @@ const AccountsPage = () => {
         return user ? user.username : params.value;
       },
       editable: true,
-    },
-    { headerName: "Start Value", field: "value", minWidth: 150, editable: true },
+    }
   ];
 
   const onSelectionChanged = () => {
@@ -205,9 +204,9 @@ const AccountsPage = () => {
         </select>
         <input
           type="number"
-          name="value"
-          placeholder="Start Value"
-          value={newAccountData.value}
+          name="balance"
+          placeholder="balance"
+          value={newAccountData.balance}
           onChange={handleInputChange}
         />
         <button type="submit">Create Account</button>

@@ -77,7 +77,7 @@ class FamilyFinStateSerializer(serializers.ModelSerializer):
                         date=datetime.now().date() - timedelta(days=1)
                     )
                     if rate is not None:
-                        rate = float(rate)
+                        rate = rate
                         balance = balance / rate
                     else:
                         # Handle the case where the rate is not found
