@@ -1,0 +1,58 @@
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #282c34;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.dropdown-menu a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-trigger {
+    cursor: pointer;
+}
+
+.menu-trigger:hover {
+    text-decoration: underline;
+    text-decoration-color: yellow;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+    text-decoration-color: yellow;
+}
+
+.nav-link {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.nav-link .fa-icon {
+    margin-right: 8px;
+}
+
+.nav-link.active-link,
+.nav-link.active-link .fa-icon {
+    color: yellow;
+}
+
+.nav-link:hover .fa-icon {
+    color: yellow;
+}

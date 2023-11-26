@@ -1,6 +1,23 @@
 from django.contrib import admin
 
 from .models import Category, Transaction, Transaction_Type
+from django import forms
+
+
+class TransactionAdminForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+        exclude = ('type',)  # Exclude 'type' field from form validation
+
+    def clean(self):
+        cleaned_data = super().clean()
+        category = cleaned_data.get('category')
+
+        if category:
+            cleaned_data['type'] = category.type
+
+        return cleaned_data
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -20,8 +37,9 @@ class Transaction_TypeAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
+    form = TransactionAdminForm
     list_display = (
-        'id', 'title', 'type', 'category', 'who',
+        'id', 'title', 'category', 'who',
         'account', 'amount', 'currency', 'author', 'date'
     )
     list_display_links = ('id', 'title')

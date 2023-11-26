@@ -50,14 +50,8 @@ const Transactions = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const getTypeTitleById = (typeId) => {
-        const type = transactionTypes.find(t => t.id === typeId);
-        return type ? type.title : '';
-      };
-
     const [newTransaction, setNewTransaction] = useState({
         title: '',
-        type: '',
         category: '',
         who: '',
         account: '',
@@ -87,7 +81,6 @@ const Transactions = () => {
     
                 setNewTransaction(prev => ({
                     ...prev,
-                    type: types[0]?.id,
                     category: categoriesData[0]?.id,
                     who: usersData[0]?.id,
                     account: accountsData[0]?.id
@@ -111,10 +104,6 @@ const Transactions = () => {
             setCurrentPage(currentPage - 1);
         }
     };
-
-    const handleTypeChange = (e) => {
-        setNewTransaction(prev => ({ ...prev, type: parseInt(e.target.value) }));
-    }
     
     const handleCategoryChange = (e) => {
         setNewTransaction(prev => ({ ...prev, category: parseInt(e.target.value) }));
@@ -129,8 +118,6 @@ const Transactions = () => {
             setNewTransaction(prev => ({ ...prev, account: '' }));
         }
     };
-
-
 
     const handleAccountChange = (e) => {
         setNewTransaction(prev => ({ ...prev, account: parseInt(e.target.value) }));
@@ -217,7 +204,6 @@ const Transactions = () => {
             field: "type",
             minWidth: 100,
             sortable: true,
-            editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: transactionTypes.map(type => type.id)
@@ -312,6 +298,11 @@ const Transactions = () => {
         cellStyle: { textAlign: 'left' }
     }));
 
+    const getCategoryTitleById = (categoryId) => {
+        const category = categories.find(c => c.id === categoryId);
+        return category ? category.title : '';
+    };
+
     return (
         <div>
             <div className="form-container">
@@ -320,21 +311,6 @@ const Transactions = () => {
                     <div className="form-group">
                         <label>Title:</label>
                         <input value={newTransaction.title} onChange={e => setNewTransaction(prev => ({ ...prev, title: e.target.value }))} />
-                    </div>
-                    {/* <div className="form-group">
-                        <label>Type:</label>
-                        <select value={newTransaction.type} onChange={handleTypeChange}>
-                            <option value="">Select a type</option>
-                            {transactionTypes.map(type => <option key={type.id} value={type.id}>{type.title}</option>)}
-                        </select>
-                    </div> */}
-                    <div className="form-group">
-                        <label>Type:</label>
-                        <select value={newTransaction.type} onChange={handleTypeChange}>
-                        {transactionTypes.map(type => (
-                            <option key={type.id} value={type.id}>{type.title}</option>
-                        ))}
-                        </select>
                     </div>
                     <div className="form-group">
                         <label>Category:</label>
@@ -356,7 +332,7 @@ const Transactions = () => {
                             ))}
                         </select>
                     </div>
-                    {getTypeTitleById(newTransaction.type) === 'Transfer' && (
+                    {getCategoryTitleById(newTransaction.category) === 'Transfer' && (
                         <div className="form-group">
                             <label>Account To:</label>
                             <select 
@@ -391,7 +367,6 @@ const Transactions = () => {
                     </div>
                     <div className="button-remove">
                         <button type="button" onClick={removeSelected}>Remove Selected</button>
-                        {/* <button onClick={removeSelected}>Remove Selected</button> */}
                     </div>
                 </form>
             </div>

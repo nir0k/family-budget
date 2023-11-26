@@ -1,0 +1,15 @@
+.family-header {
+    display: flex;
+    align-items: center; 
+}
+
+.family-title {
+    margin-right: 20px;
+}
+
+.family-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}

@@ -1,0 +1,39 @@
+.profile-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px; /* Add some padding if needed */
+}
+
+.profile-page-container > div {
+    width: 100%;
+    text-align: left;
+}
+
+.profile-page-container label, 
+.profile-page-container input, 
+.profile-page-container button {
+    width: 100%;
+}
+
+.profile-item {
+    display: flex;
+    align-items: left; /* Align label and text */
+    margin-bottom: 10px; /* Space between items */
+    margin-right: 10px;
+    justify-content: flex-start;
+}
+
+.profile-label {
+    margin-right: 10px;
+}
+
+button.delete-button {
+    background-color: red;
+    color: white;
+    /* Other styling as necessary */
+}

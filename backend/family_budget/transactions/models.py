@@ -77,6 +77,7 @@ class Transaction(models.Model):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        self.type = self.category.type
         converted_amount = self.convert_amount(
             amount=self.amount,
             from_currency=self.currency,

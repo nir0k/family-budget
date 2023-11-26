@@ -1,5 +1,7 @@
 from rest_framework import permissions
 
+from budget.models import Family
+
 
 class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -86,9 +88,22 @@ class IsFamilymember(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
-            return True
+            if request.user in obj.members.all():
+                return True
+            return False
         if request.method == 'PATCH' or request.method == 'DELETE':
             if request.user in obj.members.all():
                 return True
             return False
+        return True
+
+
+class IsAdminOrFamilyMember(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+        if request.user.is_admin or request.user.is_superuser:
+            view.queryset = Family.objects.all()
+        else:
+            view.queryset = Family.objects.filter(members=request.user)
         return True

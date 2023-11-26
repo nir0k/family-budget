@@ -44,4 +44,4 @@ class TransactionSerializer(serializers.ModelSerializer):
             'date',
             'account_to',
         )
-        read_only_fields = ('author',)
+        read_only_fields = ('author', 'type')

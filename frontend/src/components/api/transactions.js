@@ -2,12 +2,6 @@ import { BASE_URL } from '../config';
 import { getHeaders } from './apiUtils';
 
 
-// export const fetchTransactions = (page = 1) => {
-//     return fetch(`${BASE_URL}/transaction/?page=${page}`, {
-//         headers: getHeaders(),
-//     })
-//     .then(response => response.json());
-// };
 export const fetchTransactions = (page = 1) => {
     return fetch(`${BASE_URL}/transaction/?page=${page}`, {
         headers: getHeaders(),

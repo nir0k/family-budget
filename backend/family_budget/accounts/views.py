@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from budget.models import Family
 
 from .models import Account, Account_Type
+from users.models import User
 from .serializers import (Account_TypeSerializer, AccountSerializer,
                           FamilyFinStateSerializer)
 
@@ -19,7 +20,9 @@ class AccountViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
-        return Account.objects.filter(owner=self.request.user)
+        families = Family.objects.filter(members=self.request.user)
+        family_members = User.objects.filter(families__in=families).distinct()
+        return Account.objects.filter(owner__in=family_members)
 
 
 class FamilyFinStateViewSet(viewsets.ModelViewSet):

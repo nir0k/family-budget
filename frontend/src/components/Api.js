@@ -7,3 +7,4 @@ export * from './api/account';
 export * from './api/category';
 export * from './api/currency';
 export * from './api/users';
+export * from './api/family';
