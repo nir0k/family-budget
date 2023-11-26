@@ -1,9 +1,10 @@
+from django.db.models import Q
 from rest_framework import viewsets
 
 from budget.models import Family
+from users.models import User
 
 from .models import Account, Account_Type
-from users.models import User
 from .serializers import (Account_TypeSerializer, AccountSerializer,
                           FamilyFinStateSerializer)
 
@@ -20,9 +21,12 @@ class AccountViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
-        families = Family.objects.filter(members=self.request.user)
-        family_members = User.objects.filter(families__in=families).distinct()
-        return Account.objects.filter(owner__in=family_members)
+        user_families = Family.objects.filter(members=self.request.user)
+        family_members = User.objects.filter(
+            families__in=user_families).distinct()
+        return Account.objects.filter(
+            Q(owner__in=family_members) | Q(owner=self.request.user)
+        )
 
 
 class FamilyFinStateViewSet(viewsets.ModelViewSet):

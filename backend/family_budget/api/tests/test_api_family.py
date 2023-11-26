@@ -51,8 +51,8 @@ class ApiFamilyTest(APITestCase):
         response = self.auth_client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK,
                          'Response code shold be 200')
-        self.assertEqual(response.data['results'][0]['title'], data['title'])
-        self.assertEqual(response.data['results'][0]['members'],
+        self.assertEqual(response.data[0]['title'], data['title'])
+        self.assertEqual(response.data[0]['members'],
                          data['members'])
 
         data = {
