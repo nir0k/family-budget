@@ -20,6 +20,10 @@ function App() {
 
     const [userDetails, setUserDetails] = useState({ username: '', familyTitle: '' });
 
+    const updateUserDetails = (newDetails) => {
+        setUserDetails(newDetails);
+    };
+
     useEffect(() => {
         fetchUserData().then(data => {
             if (data) {
@@ -37,7 +41,7 @@ function App() {
                 <NavigationBar userDetails={userDetails} />
                 <Routes>
                     <Route path="/" element={<MainPage />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={<Login updateUserDetails={updateUserDetails} />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/transactions" element={<TransactionGrid />} />
                     <Route path="/budget" element={<BudgetGrid />} />

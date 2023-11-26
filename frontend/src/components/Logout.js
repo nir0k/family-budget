@@ -1,18 +1,17 @@
 // components/logout.js
-import React from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = ({ className, linkStyle }) => {
+const Logout = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  useEffect(() => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userInfo');
     navigate('/login');
-  };
+  }, [navigate]);
 
-  return (
-    <button onClick={handleLogout} className={`${className} ${linkStyle} nav-button`}>Logout</button>
-  );
+  return null;
 };
 
 export default Logout;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from './Api';
+import { login, fetchUserData } from './Api'; 
 
 
-const Login = () => {
+const Login = ({ updateUserDetails }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
@@ -16,14 +16,22 @@ const Login = () => {
     try {
       const response = await login({ email, password });
       if (response.auth_token) {
-        localStorage.setItem('authToken', `Token ${response.auth_token}`);
-        navigate('/');
+          localStorage.setItem('authToken', `Token ${response.auth_token}`);
+          // Fetch user data and update the state in App component
+          fetchUserData().then(userData => {
+              updateUserDetails({
+                  username: userData.username,
+                  familyTitle: userData.family?.title
+              });
+          });
+          navigate('/');
       } else {
-        setErrorMessage('Invalid login credentials.');
+          setErrorMessage('Invalid login credentials.');
       }
     } catch (error) {
-      setErrorMessage('An error occurred while trying to log in.');
+        setErrorMessage('An error occurred while trying to log in.');
     }
+  // };
   };
 
   return (

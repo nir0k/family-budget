@@ -15,7 +15,6 @@ import {
     fetchCurrencies
 } from './Api';
 
-
 const Transactions = () => {
     const [rowData, setRowData] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -29,6 +28,11 @@ const Transactions = () => {
     const [nextPageUrl, setNextPageUrl] = useState(null);
     const [prevPageUrl, setPrevPageUrl] = useState(null);
     const [currencies, setCurrencies] = useState([]);
+
+    // Retrieve logged-in user's information
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    const loggedInUserId = userInfo?.id;
+
     useEffect(() => {
         const getCurrencies = async () => {
             try {
@@ -50,10 +54,15 @@ const Transactions = () => {
         return `${year}-${month}-${day}`;
     };
 
+    const getUsernameById = (ownerId) => {
+        const user = users.find(u => u.id === ownerId);
+        return user ? user.username : 'Unknown';
+    };
+
     const [newTransaction, setNewTransaction] = useState({
         title: '',
         category: '',
-        who: '',
+        who: loggedInUserId,
         account: '',
         account_to: '',
         amount: '',
@@ -77,13 +86,17 @@ const Transactions = () => {
                 setUsers(usersData);
                 setNextPageUrl(transactionsData.next);
                 setPrevPageUrl(transactionsData.previous);
-                setTotalPages(Math.ceil(transactionsData.count / 50));  
-    
+                setTotalPages(Math.ceil(transactionsData.count / 50));
+
+                // Filter accounts for the logged-in user
+                const filtered = accountsData.filter(account => account.owner === loggedInUserId);
+                setFilteredAccounts(filtered);
+
                 setNewTransaction(prev => ({
                     ...prev,
                     category: categoriesData[0]?.id,
-                    who: usersData[0]?.id,
-                    account: accountsData[0]?.id
+                    who: loggedInUserId,
+                    account: filtered[0]?.id
                 }));
             }).catch(error => {
                 console.error('Error fetching data:', error);
@@ -91,7 +104,8 @@ const Transactions = () => {
         };
     
         fetchPageData();
-    }, [currentPage]);
+    }, [currentPage, loggedInUserId]);
+    
 
     const handleNextPage = () => {
         if (nextPageUrl) {
@@ -114,6 +128,7 @@ const Transactions = () => {
         setNewTransaction(prev => ({ ...prev, who: userId }));
         const filtered = accounts.filter(account => account.owner === userId);
         setFilteredAccounts(filtered);
+
         if (!filtered.find(account => account.id === newTransaction.account)) {
             setNewTransaction(prev => ({ ...prev, account: '' }));
         }
@@ -338,8 +353,10 @@ const Transactions = () => {
                             <select 
                                 value={newTransaction.account_to}
                                 onChange={handleAccountToChange}>
-                                {filteredAccounts.map(account => (
-                                    <option key={account.id} value={account.id}>{account.title}</option>
+                                {accounts.map(account => (
+                                    <option key={account.id} value={account.id}>
+                                        {`${account.title} - ${getUsernameById(account.owner)}`}
+                                    </option>
                                 ))}
                             </select>
                         </div>
