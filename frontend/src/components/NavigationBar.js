@@ -1,7 +1,7 @@
 // components/NavigationBar.js
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useMatch } from 'react-router-dom';
-import './css/Auth.css';
+import './css/NavigationBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars,
     faRightLeft,

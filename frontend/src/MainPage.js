@@ -1,10 +1,11 @@
 // MainPage.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './components/css/MainPage.css'; // Import the CSS file
 
 const MainPage = () => {
     return (
-        <div>
+        <div className="main-container"> {/* Apply the CSS class */}
             <h1>Welcome to the Main Page</h1>
             <ul>
                 <li><Link to="/transactions">Go to Transactions</Link></li>

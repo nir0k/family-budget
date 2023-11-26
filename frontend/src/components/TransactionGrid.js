@@ -319,7 +319,7 @@ const Transactions = () => {
     };
 
     return (
-        <div>
+        <div className="main-page-container">
             <div className="form-container">
                 <h3>Add Transaction</h3>
                 <form onSubmit={handleSubmit}>

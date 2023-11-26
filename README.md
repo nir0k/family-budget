@@ -3,6 +3,8 @@
 ## Know Issue:
 - Account: Not work edit exists accounts
 - Category: Not work edit exists categories
+- Not auto fill-in date in transactions
+
 
 ## Need add:
 - Backend:
@@ -17,7 +19,7 @@
 - Frontend:
     - add check for transaction succesfully added (exist problem with wrong date)
     - page for view account state by user 
-    - page for view family finance state
+    - ~~page for view family finance state~~
 
 
 

@@ -157,7 +157,7 @@ const AccountsPage = () => {
   };
 
   return (
-    <div className="ag-theme-alpine" style={{ height: '100%', width: '100%' }}>
+    <div className="ag-theme-alpine, main-page-container" style={{ height: '100%', width: '100%' }}>
       <form onSubmit={handleCreateAccount}>
         <input
           type="text"

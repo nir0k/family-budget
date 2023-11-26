@@ -28,7 +28,7 @@ const FamilyFinanceState = () => {
     }
 
     return (
-        <div className="centered-container">
+        <div className="centered-container, main-page-container">
             <div>
                 <h1>{familyState.title}</h1>
                 <div>Current state: {formatNumber(familyState.current)}</div>

@@ -129,7 +129,7 @@ const CategoriesPage = () => {
       ];
 
       return (
-        <div className="categories-page">
+        <div className="categories-page, main-page-container">
             <div className="add-category-form">
                 <input type="text" value={categoryTitle} onChange={handleCategoryTitleChange} placeholder="Category Title" />
                 <select value={selectedType} onChange={handleTypeChange}>

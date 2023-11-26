@@ -152,7 +152,8 @@ const BudgetGrid = () => {
     };
 
     return (
-        <div style={{ width: "100%", height: "500px" }}>
+        <div style={{ width: "100%", height: "500px" }} className="main-page-container">
+            <h2>Budgets</h2>
             <div className="ag-theme-alpine-dark" style={{ height: '250px', width: '100%' }}>
                 <AgGridReact
                     rowData={rowData}

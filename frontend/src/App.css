@@ -171,3 +171,7 @@ body {
   text-align: left;
   width: 60%;
 }
+
+.main-page-container {
+  padding-top: 60px; /* Adjust this value to match the height of your navigation bar */
+}
