@@ -76,6 +76,13 @@ class User(AbstractBaseUser):
     role = models.CharField(
         max_length=50, choices=CHOICES, default='user', null=True, blank=True
     )
+    telegram_userid = models.PositiveBigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Telegram user ID",
+        help_text="You can get this bot @userinfobot to get your userID",
+        unique=True
+    )
 
     objects = UserManager()
 

@@ -18,7 +18,8 @@ class UserCreationForm(forms.ModelForm):
             'role',
             'first_name',
             'last_name',
-            'password'
+            'password',
+            'telegram_userid',
         )
 
     def save(self, commit=True):
@@ -45,7 +46,8 @@ class UserChangeForm(forms.ModelForm):
             'last_name',
             'password',
             'is_active',
-            'is_admin'
+            'is_admin',
+            'telegram_userid'
         )
 
 
@@ -61,7 +63,8 @@ class UserAdmin(BaseUserAdmin):
         'role',
         'first_name',
         'last_name',
-        'password'
+        'password',
+        'telegram_userid'
     )
     list_filter = ('is_admin',)
     fieldsets = (
@@ -77,6 +80,7 @@ class UserAdmin(BaseUserAdmin):
                 )
             },
         ),
+        ('Social network', {'fields': ('telegram_userid',)}),
         ('Password management', {'fields': ('password',)}),
     )
     add_fieldsets = (
@@ -92,7 +96,8 @@ class UserAdmin(BaseUserAdmin):
                     'role',
                     'first_name',
                     'last_name',
-                    'password'
+                    'password',
+                    'telegram_userid',
                 ),
             },
         ),

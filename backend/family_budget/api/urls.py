@@ -8,7 +8,8 @@ from budget.views import (BudgetViewSet, ExpenseItemViewSet, FamilyViewSet,
 from currency.views import CurrencyViewSet
 from transactions.views import (CategoryViewSet, Transaction_TypeViewSet,
                                 TransactionViewSet)
-from users.views import ProfileView, UserViewSet, change_password
+from users.views import (ProfileView, TelegramAuthView, UserViewSet,
+                         change_password)
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -25,6 +26,9 @@ router.register(r'family-state', FamilyFinStateViewSet)
 router.register(r'currency', CurrencyViewSet)
 
 urlpatterns = [
+    path('v1/auth/telegram/',
+         TelegramAuthView.as_view(),
+         name='telegram_auth'),
     path('v1/auth/', include('djoser.urls.authtoken')),
     path('users/set_password', change_password, name='set_password'),
     path('v1/users/me/', ProfileView.as_view(), name='profile'),

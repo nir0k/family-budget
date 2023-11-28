@@ -1,7 +1,7 @@
+from django import forms
 from django.contrib import admin
 
 from .models import Category, Transaction, Transaction_Type
-from django import forms
 
 
 class TransactionAdminForm(forms.ModelForm):
