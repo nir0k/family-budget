@@ -17,7 +17,7 @@ const Login = ({ updateUserDetails }) => {
       const response = await login({ email, password });
       if (response.auth_token) {
           localStorage.setItem('authToken', `Token ${response.auth_token}`);
-          // Fetch user data and update the state in App component
+
           fetchUserData().then(userData => {
               updateUserDetails({
                   username: userData.username,
@@ -31,7 +31,6 @@ const Login = ({ updateUserDetails }) => {
     } catch (error) {
         setErrorMessage('An error occurred while trying to log in.');
     }
-  // };
   };
 
   return (
@@ -58,6 +57,7 @@ const Login = ({ updateUserDetails }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={{ marginBottom: '10px' }}
+            autoComplete="username"
           />
           <input
             type="password"
@@ -65,6 +65,7 @@ const Login = ({ updateUserDetails }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={{ marginBottom: '10px' }}
+            autoComplete="current-password"
           />
           <button type="submit">Login</button>
         </form>

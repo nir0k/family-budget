@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
+from django.http import Http404
 from rest_framework import serializers
 
 from budget.models import Budget, Family
 from currency.convector import get_rate_for_date
+from currency.models import Currency
 from transactions.models import Transaction, Transaction_Type
 
 from .models import Account, Account_Type
@@ -52,6 +55,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class FamilyFinStateSerializer(serializers.ModelSerializer):
     current = serializers.SerializerMethodField()
+    currency = serializers.SerializerMethodField()
 
     class Meta:
         model = Family
@@ -59,20 +63,29 @@ class FamilyFinStateSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'current',
+            'currency'
         )
 
     def get_current(self, obj) -> float:
         members = obj.members.all()
-        budget_currency = Budget.objects.get(family=obj).currency
+        try:
+            currency = Budget.objects.get(family=obj).currency
+        except ObjectDoesNotExist:
+            fallback_currency = Currency.objects.first()
+            if fallback_currency is not None:
+                currency = fallback_currency
+            else:
+                return 0.0
+
         family_balance = 0
         for member in members:
             member_accounts = Account.objects.filter(owner=member)
             member_balance = 0
             for member_account in member_accounts:
                 balance = member_account.balance
-                if member_account.currency != budget_currency:
+                if member_account.currency != currency:
                     rate = get_rate_for_date(
-                        from_currency=budget_currency,
+                        from_currency=currency,
                         to_currency=member_account.currency,
                         date=datetime.now().date() - timedelta(days=1)
                     )
@@ -85,3 +98,14 @@ class FamilyFinStateSerializer(serializers.ModelSerializer):
                 member_balance += balance
             family_balance += member_balance
         return round(float(family_balance), 2)
+
+    def get_currency(self, obj) -> str:
+        try:
+            currency = Budget.objects.get(family=obj).currency
+        except ObjectDoesNotExist:
+            fallback_currency = Currency.objects.first()
+            if fallback_currency is not None:
+                currency = fallback_currency
+            else:
+                raise Http404("Currency does not exist")
+        return currency.code

@@ -99,8 +99,13 @@ export const fetchFamilyState = async () => {
         });
 
         if (!response.ok) {
-            const errorResponse = await response.json();
-            throw new Error(`Fetching family state failed: ${errorResponse.detail}`);
+            if(response.headers.get("content-type").includes("application/json")) {
+                const errorResponse = await response.json();
+                throw new Error(`Fetching family state failed: ${errorResponse.detail}`);
+            } else {
+                const errorText = await response.text();
+                throw new Error(`Fetching family state failed: ${errorText}`);
+            }
         }
 
         return response.json();
