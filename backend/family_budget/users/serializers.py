@@ -46,7 +46,8 @@ class ProfileSerializers(serializers.ModelSerializer):
             'last_name',
             'email',
             'role',
-            'family'
+            'family',
+            'telegram_userid'
         )
 
     def get_family(self, user):

@@ -7,6 +7,7 @@ from users.models import User
 from .models import Account, Account_Type
 from .serializers import (Account_TypeSerializer, AccountSerializer,
                           FamilyFinStateSerializer)
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class Account_TypeViewSet(viewsets.ModelViewSet):
@@ -19,14 +20,19 @@ class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     pagination_class = None
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['owner',]
 
     def get_queryset(self):
+        queryset = super().get_queryset()
         user_families = Family.objects.filter(members=self.request.user)
-        family_members = User.objects.filter(
-            families__in=user_families).distinct()
-        return Account.objects.filter(
+        family_members = User.objects.filter(families__in=user_families
+                                             ).distinct()
+
+        queryset = queryset.filter(
             Q(owner__in=family_members) | Q(owner=self.request.user)
         )
+        return queryset
 
 
 class FamilyFinStateViewSet(viewsets.ModelViewSet):
