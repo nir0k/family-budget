@@ -1,8 +1,10 @@
 // components/TransactionGrid.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { 
     fetchTransactions,
     fetchCategories,
@@ -28,10 +30,23 @@ const Transactions = () => {
     const [nextPageUrl, setNextPageUrl] = useState(null);
     const [prevPageUrl, setPrevPageUrl] = useState(null);
     const [currencies, setCurrencies] = useState([]);
-
-    // Retrieve logged-in user's information
+    const formRef = useRef(null);
+    const [tableHeight, setTableHeight] = useState('400px');
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
     const loggedInUserId = userInfo?.id;
+    const updateTableHeight = () => {
+        const formHeight = formRef.current ? formRef.current.offsetHeight : 0;
+        const navbarHeight = 60; // Replace with actual navbar height if any
+        const remainingHeight = window.innerHeight - formHeight - navbarHeight;
+        setTableHeight(`${remainingHeight}px`);
+    };
+
+    useEffect(() => {
+        updateTableHeight();
+        window.addEventListener('resize', updateTableHeight);
+        return () => window.removeEventListener('resize', updateTableHeight);
+    }, []);
+
 
     useEffect(() => {
         const getCurrencies = async () => {
@@ -177,34 +192,136 @@ const Transactions = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+    
         if (!newTransaction.who) {
-            console.error('Who field is required!');
+            toast.error('Who field is required!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
             return;
         }
-
-        createTransaction(newTransaction).then(data => {
-            if (gridApi) {
-                gridApi.applyTransaction({ add: [data] });
-            }
-            setNewTransaction({
-                title: '',
-                type: transactionTypes[0]?.id,
-                category: categories[0]?.id,
-                who: users[0]?.id,
-                account: accounts[0]?.id,
-                amount: '',
-                currency: currencies[0]?.id || '',
-                description: '',
-                date: getCurrentDate()
+        if (!newTransaction.category) {
+            toast.error('Category field is required!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
             });
-        }).catch(error => {
-            console.error('Error adding new transaction:', error);
-            if (error.response && error.response.data) {
-                console.error('Backend error:', error.response.data.message);
+            return;
+        }
+        if (!newTransaction.account) {
+            toast.error('Account field is required!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
+        }
+        if (!newTransaction.amount) {
+            toast.error('Amount field is required!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
+        }
+        if (!newTransaction.currency) {
+            toast.error('Currency field is required!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
+        }
+        if (!newTransaction.date) {
+            toast.error('Date field is required!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
+        }
+        if (newTransaction.category === 'Transfer') {
+            if (!newTransaction.account_to) {
+            toast.error('Account To field is required if selected Transfer category!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            return;
             }
-        });
+        }
+    
+        createTransaction(newTransaction)
+            .then(({ status, ok, body }) => {
+                if (!ok) {
+                    throw new Error(`Failed to add transaction. Server responded with status: ${status}`, body);
+                }
+                toast.success('Transaction added successfully!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                if (gridApi) {
+                    gridApi.applyTransaction({ add: [body], addIndex: 0 });
+                }
+                setNewTransaction({
+                    title: '',
+                    type: transactionTypes[0]?.id,
+                    category: categories[0]?.id,
+                    who: users[0]?.id,
+                    account: accounts[0]?.id,
+                    amount: '',
+                    currency: currencies[0]?.id || '',
+                    description: '',
+                    date: getCurrentDate()
+                });
+            })
+            .catch(error => {
+                toast.error(error.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            });
     };
+    
     
     const onGridReady = params => {
         setGridApi(params.api);
@@ -219,13 +336,20 @@ const Transactions = () => {
             field: "type",
             minWidth: 100,
             sortable: true,
+            filter: 'agTextColumnFilter',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: transactionTypes.map(type => type.id)
             },
-            valueFormatter: params => {
-                const type = transactionTypes.find(t => t.id === params.value);
+            valueGetter: params => {
+                const type = transactionTypes.find(t => t.id === params.data.type);
                 return type ? type.title : '';
+            },
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const formattedFilterText = filterText.toLowerCase();
+                    return value.toLowerCase().includes(formattedFilterText);
+                }
             }
         },
         {
@@ -233,14 +357,21 @@ const Transactions = () => {
             field: "category",
             minWidth: 150,
             sortable: true,
+            filter: 'agTextColumnFilter',
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: categories.map(cat => cat.id)
             },
-            valueFormatter: params => {
-                const cat = categories.find(c => c.id === params.value);
+            valueGetter: params => {
+                const cat = categories.find(c => c.id === params.data.category);
                 return cat ? cat.title : '';
+            },
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const formattedFilterText = filterText.toLowerCase();
+                    return value.toLowerCase().includes(formattedFilterText);
+                }
             }
         },
         {
@@ -248,14 +379,21 @@ const Transactions = () => {
             field: "who",
             minWidth: 80,
             sortable: true,
+            filter: 'agTextColumnFilter',
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: users.map(user => user.id)
             },
-            valueFormatter: params => {
-                const user = users.find(user => user.id === params.value);
+            valueGetter: params => {
+                const user = users.find(user => user.id === params.data.who);
                 return user ? user.username : '';
+            },
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const formattedFilterText = filterText.toLowerCase();
+                    return value.toLowerCase().includes(formattedFilterText);
+                }
             }
         },
         {
@@ -263,14 +401,21 @@ const Transactions = () => {
             field: "account",
             minWidth: 150,
             sortable: true,
+            filter: 'agTextColumnFilter',
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: accounts.map(account => account.id)
             },
-            valueFormatter: params => {
-                const account = accounts.find(account => account.id === params.value);
+            valueGetter: params => {
+                const account = accounts.find(account => account.id === params.data.account);
                 return account ? account.title : '';
+            },
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const formattedFilterText = filterText.toLowerCase();
+                    return value.toLowerCase().includes(formattedFilterText);
+                }
             }
         },
         {
@@ -278,34 +423,70 @@ const Transactions = () => {
             field: "account_to",
             minWidth: 150,
             sortable: true,
+            filter: 'agTextColumnFilter',
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: accounts.map(account => account.id)
             },
-            valueFormatter: params => {
-                const account = accounts.find(account => account.id === params.value);
+            valueGetter: params => {
+                const account = accounts.find(account => account.id === params.data.account_to);
                 return account ? account.title : '';
+            },
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const formattedFilterText = filterText.toLowerCase();
+                    return value.toLowerCase().includes(formattedFilterText);
+                }
             }
         },        
-        { headerName: "Amount", field: "amount", minWidth: 120, sortable: true, editable: true, valueFormatter: currencyFormatter },
+        {
+            headerName: "Amount",
+            field: "amount",
+            minWidth: 120,
+            sortable: true,
+            filter: 'agNumberColumnFilter',
+            editable: true,
+            valueFormatter: currencyFormatter
+        },
         {
             headerName: "Currency",
             field: "currency",
             minWidth: 80,
             sortable: true,
+            filter: 'agTextColumnFilter',
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: currencies.map(currency => currency.id)
             },
-            valueFormatter: params => {
-                const currency = currencies.find(curr => curr.id === params.value);
+            valueGetter: params => {
+                const currency = currencies.find(curr => curr.id === params.data.currency);
                 return currency ? currency.code : '';
+            },
+            filterParams: {
+                textCustomComparator: (filter, value, filterText) => {
+                    const formattedFilterText = filterText.toLowerCase();
+                    return value.toLowerCase().includes(formattedFilterText);
+                }
             }
         },
-        { headerName: "Date", minWidth: 120, field: "date", sortable: true, editable: true, valueFormatter: dateFormatter },
-        { headerName: "Description", minWidth: 100 , field: "description", sortable: true, editable: true }
+        {
+            headerName: "Date",
+            minWidth: 120,
+            field: "date",
+            sortable: true,
+            filter: 'agDateColumnFilter',
+            editable: true,
+            valueFormatter: dateFormatter
+        },
+        { 
+            headerName: "Description",
+            minWidth: 100 ,
+            field: "description",
+            sortable: true,
+            editable: true
+        }
     ];
 
     const columnDefs = originalColumnDefs.map(col => ({
@@ -320,7 +501,7 @@ const Transactions = () => {
 
     return (
         <div className="main-page-container">
-            <div className="form-container">
+            <div ref={formRef} className="form-container">
                 <h3>Add Transaction</h3>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -387,7 +568,7 @@ const Transactions = () => {
                     </div>
                 </form>
             </div>
-            <div className="ag-theme-alpine-dark" style={{ height: 400, width: '100%' }}>
+            <div className="ag-theme-alpine-dark" style={{ height: tableHeight, width: '100%' }}>
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}
@@ -401,6 +582,7 @@ const Transactions = () => {
                 <span>Page {currentPage} of {totalPages}</span>
                 <button onClick={handleNextPage} disabled={!nextPageUrl}>Next</button>
             </div>
+            <ToastContainer />
         </div>
     );
 }

@@ -3,7 +3,16 @@
 ## Know Issue:
 - Account: Not work edit exists accounts
 - Category: Not work edit exists categories
-- Not auto fill-in date in transactions
+- Family state endpoint chek work with multy budgets
+- Budget:
+    - Add ability to clone budget
+    - Aabili to edit budget
+- In Transactions:
+    - Initial value in who need reselected before save
+    - Initial after change who need reselect account before save
+    - Not auto fill-in date
+    - Not work convert from * to KZT
+    - ~~Add ability to filter by user, account, date~~
 
 
 ## Need add:
@@ -11,15 +20,16 @@
     - Auto choice currency for card
     - Add choice main account for user
     - Add endpoint for get user account state
-    - Add endpoint for get family finance state
+    - ~~Add endpoint for get family finance state~~
     - Add rigth to edit family for admin
     - Add test for api user
     - Add test for currency convector
 
 - Frontend:
-    - add check for transaction succesfully added (exist problem with wrong date)
-    - page for view account state by user 
+    - ~~add check for transaction succesfully added (exist problem with wrong date)~~
+    - ~~page for view account state by user~~
     - ~~page for view family finance state~~
+    - ~~Add new transaction in the upper table~~
 
 
 

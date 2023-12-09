@@ -28,6 +28,23 @@ const AccountsPage = () => {
   });
   const gridRef = useRef(null);
 
+  const updateTableHeight = () => {
+    const tableContainer = document.querySelector('.ag-theme-alpine-dark');
+    if (tableContainer) {
+      const offsetTop = tableContainer.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      const newHeight = windowHeight - offsetTop;
+      tableContainer.style.height = `${newHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    updateTableHeight(); // Set initial height
+    window.addEventListener('resize', updateTableHeight); // Adjust on window resize
+
+    return () => window.removeEventListener('resize', updateTableHeight); // Clean up on unmount
+  }, []);
+
   useEffect(() => {
     const getAccountTypesAndCurrencies = async () => {
       const types = await fetchAccountTypes();
@@ -47,39 +64,70 @@ const AccountsPage = () => {
       headerCheckboxSelection: true,
       width: 50,
     },
-    { headerName: "Title", minWidth: 150, field: "title", editable: true },
+    {
+      headerName: "Title",
+      minWidth: 150,
+      field: "title",
+      editable: true,
+      sortable: true,
+      filter: 'agTextColumnFilter',
+    },
     {
       headerName: "Type",
       field: "type",
       minWidth: 80,
       editable: true,
+      sortable: true,
+      filter: 'agTextColumnFilter',
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
         values: accountTypes.map((type) => type.title),
       },
-      valueFormatter: (params) => {
-        const type = accountTypes.find((type) => type.id === params.value);
+      valueGetter: params => {
+        const type = accountTypes.find((type) => type.id === params.data.type);
         return type ? type.title : params.value;
       },
+      filterParams: {
+          textCustomComparator: (filter, value, filterText) => {
+              const formattedFilterText = filterText.toLowerCase();
+              return value.toLowerCase().includes(formattedFilterText);
+          }
+      }
     },
-    { headerName: "Current Balance", minWidth: 150, field: "balance" },
+    {
+      headerName: "Current Balance",
+      minWidth: 150,
+      field: "balance",
+      sortable: true,
+      filter: 'agNumberColumnFilter',
+    },
     {
       headerName: "Currency",
       field: "currency",
       minWidth: 80,
       editable: true,
+      sortable: true,
+      filter: 'agTextColumnFilter',
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
         values: currencies.map((currency) => currency.code),
       },
-      valueFormatter: (params) => {
-        const currency = currencies.find((currency) => currency.id === params.value);
-        return currency ? currency.code : params.value;
+      valueGetter: params => {
+        const currency = currencies.find(curr => curr.id === params.data.currency);
+        return currency ? currency.code : '';
       },
+      filterParams: {
+          textCustomComparator: (filter, value, filterText) => {
+              const formattedFilterText = filterText.toLowerCase();
+              return value.toLowerCase().includes(formattedFilterText);
+          }
+      }
     },
     {
       headerName: "Owner",
       field: "owner",
+      sortable: true,
+      filter: 'agTextColumnFilter',
       minWidth: 100,
       valueFormatter: (params) => {
         const user = users.find(user => user.id === params.value);

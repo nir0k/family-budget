@@ -39,7 +39,14 @@ export const createTransaction = (data) => {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify(data)
-    }).then(response => response.json());
+    })
+    .then(response => 
+        response.json().then(body => ({ 
+            status: response.status, 
+            ok: response.ok,
+            body 
+        }))
+    );
 };
 
 export const fetchTransactionTypes = () => {
