@@ -123,8 +123,6 @@ const CategoriesPage = () => {
           headerName: 'Type',
           field: 'type',
           minWidth: 60,
-          valueFormatter: params =>
-            transactionTypes.find(type => type.id === params.value)?.title || ''
         }
       ];
 
@@ -139,7 +137,7 @@ const CategoriesPage = () => {
                 </select>
                 <button onClick={handleAddCategory}>Add Category</button>
             </div>
-            <button onClick={handleDeleteCategories}>Delete Selected Categories</button>
+                <button onClick={handleDeleteCategories} className='button'>Delete Selected Categories</button>
             <div className="ag-theme-alpine-dark" style={{ margin: '20px auto', height: tableHeight, width: '80%' }}>
                 <AgGridReact
                     rowData={categories}

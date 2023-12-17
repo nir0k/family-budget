@@ -28,7 +28,7 @@ export const deleteTransaction = (id) => {
 
 export const updateTransaction = (id, data) => {
     return fetch(`${BASE_URL}/transaction/${id}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: getHeaders(),
         body: JSON.stringify(data)
     });

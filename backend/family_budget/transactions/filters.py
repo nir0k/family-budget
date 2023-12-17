@@ -1,12 +1,13 @@
-import django_filters
+from django_filters import CharFilter
+from django_filters import rest_framework as filters
 
 from .models import Category, Transaction
 
 
-class TransactionFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(
+class TransactionFilter(filters.FilterSet):
+    title = filters.CharFilter(
         field_name='title', lookup_expr='icontains')
-    description = django_filters.CharFilter(
+    description = filters.CharFilter(
         field_name='description', lookup_expr='icontains')
 
     class Meta:
@@ -21,13 +22,9 @@ class TransactionFilter(django_filters.FilterSet):
         ]
 
 
-class CategoryFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(
-        field_name='title', lookup_expr='icontains')
+class CategoryFilter(filters.FilterSet):
+    type_title = CharFilter(field_name='type__title', lookup_expr='exact')
 
     class Meta:
         model = Category
-        fields = [
-            'title',
-            'type',
-        ]
+        fields = ['type_title']

@@ -1,6 +1,7 @@
 // App.js
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './components/css/App.css';
+import './components/css/common.css';
 import TransactionGrid from './components/TransactionGrid';
 import MainPage from './MainPage';
 import NavigationBar from './components/NavigationBar';
@@ -15,7 +16,8 @@ import { fetchUserData } from './components/Api';
 import FamilyPage from './components/FamilyPage';
 import ProfilePage from './components/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import ExchangeRatesGrid from './components/ExchangeRatesPage';
+import CurrencyGrid from './components/CurrencyPage';
 
 
 function App() {
@@ -85,6 +87,16 @@ function App() {
                     <Route path="/profile" element={
                         <ProtectedRoute>
                             <ProfilePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/exchange-rate" element={
+                        <ProtectedRoute>
+                            <ExchangeRatesGrid />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/currency" element={
+                        <ProtectedRoute>
+                            <CurrencyGrid />
                         </ProtectedRoute>
                     } />
                 </Routes>

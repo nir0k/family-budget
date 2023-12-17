@@ -5,7 +5,7 @@ import './components/css/MainPage.css'; // Import the CSS file
 
 const MainPage = () => {
     return (
-        <div className="main-container"> {/* Apply the CSS class */}
+        <div className="main-container, main-page-container"> {/* Apply the CSS class */}
             <h1>Welcome to the Main Page</h1>
             <ul>
                 <li><Link to="/transactions">Go to Transactions</Link></li>
@@ -13,6 +13,7 @@ const MainPage = () => {
                 <li><Link to="/accounts">Go to Accounts</Link></li>
                 <li><Link to="/categories">Go to Categories</Link></li>
                 <li><Link to="/family-finance-state">Go to Family Finance State</Link></li>
+                <li><Link to="/exchange-rate">Go to Exchange rates</Link></li>
                 {/* Add other links here as needed */}
             </ul>
         </div>

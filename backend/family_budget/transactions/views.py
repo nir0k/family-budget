@@ -3,6 +3,7 @@ from rest_framework import viewsets
 
 from users.permissions import IsAdmin, IsAuth, IsUser
 
+from .filters import CategoryFilter
 from .models import Category, Transaction, Transaction_Type
 from .serializers import (CategorySerializer, Transaction_TypeSerializer,
                           TransactionSerializer)
@@ -29,3 +30,4 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     pagination_class = None
     permission_classes = (IsAuth,)
+    filterset_class = CategoryFilter

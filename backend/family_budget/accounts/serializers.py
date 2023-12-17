@@ -9,6 +9,7 @@ from budget.models import Budget, Family
 from currency.convector import get_rate_for_date
 from currency.models import Currency
 from transactions.models import Transaction, Transaction_Type
+from users.models import User
 
 from .models import Account, Account_Type
 
@@ -39,6 +40,12 @@ class Account_TypeSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    owner = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field='username')
+    type = serializers.SlugRelatedField(
+        queryset=Account_Type.objects.all(), slug_field='title')
+    currency = serializers.SlugRelatedField(
+        queryset=Currency.objects.all(), slug_field='code')
 
     class Meta:
         model = Account

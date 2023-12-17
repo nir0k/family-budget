@@ -18,6 +18,7 @@ class Transaction_Type(models.Model):
         max_length=1,
         choices=TRANSACTION_TYPE,
         default='-',
+        unique=True
     )
 
     class Meta:
@@ -29,7 +30,7 @@ class Transaction_Type(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
     type = models.ForeignKey(Transaction_Type,
                              verbose_name='Type',
                              on_delete=models.CASCADE)
@@ -46,22 +47,27 @@ class Transaction(models.Model):
     type = models.ForeignKey(Transaction_Type,
                              related_name='transaction_type',
                              on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,
+                                 db_index=True)
     who = models.ForeignKey(User,
                             verbose_name='Who',
                             related_name='who_expense',
-                            on_delete=models.CASCADE)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+                            on_delete=models.CASCADE,
+                            db_index=True)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE,
+                                db_index=True)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     amount_converted = models.DecimalField(
         max_digits=20, decimal_places=2, blank=True, null=True)
     amount_converted_to = models.DecimalField(
         max_digits=20, decimal_places=2, blank=True, null=True)
-    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE,
+                                 db_index=True)
     description = models.CharField(max_length=256, blank=True, null=True)
     author = models.ForeignKey(User,
                                verbose_name='Author',
-                               on_delete=models.CASCADE)
+                               on_delete=models.CASCADE,
+                               db_index=True)
     date = models.DateField()
     account_to = models.ForeignKey(
         Account,
@@ -69,7 +75,8 @@ class Transaction(models.Model):
         related_name='transfers_in',
         null=True,
         blank=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        db_index=True
     )
 
     class Meta:

@@ -5,7 +5,7 @@ from accounts.views import (Account_TypeViewSet, AccountViewSet,
                             FamilyFinStateViewSet)
 from budget.views import (BudgetViewSet, ExpenseItemViewSet, FamilyViewSet,
                           IncomeItemViewSet)
-from currency.views import CurrencyViewSet
+from currency.views import CurrencyViewSet, ExchangeRateViewSet
 from transactions.views import (CategoryViewSet, Transaction_TypeViewSet,
                                 TransactionViewSet)
 from users.views import (ProfileView, TelegramAuthView, UserViewSet,
@@ -24,6 +24,7 @@ router.register(r'account-type', Account_TypeViewSet)
 router.register(r'family', FamilyViewSet)
 router.register(r'family-state', FamilyFinStateViewSet)
 router.register(r'currency', CurrencyViewSet)
+router.register(r'exchange-rate', ExchangeRateViewSet)
 
 urlpatterns = [
     path('v1/auth/telegram/',

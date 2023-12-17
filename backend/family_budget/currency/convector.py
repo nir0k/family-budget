@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from decimal import Decimal
 
 import requests
 from dotenv import load_dotenv
@@ -12,23 +13,26 @@ ACCESS_KEY = os.getenv('ACCESS_KEY_CURRENCY_RATE')
 ENDPOINT = os.getenv('CURRENCY_RATE_API_ENDPOINT')
 
 
-def update_rates_for_date(date=None, budget_currency='HUF'):
+def update_rates_for_date(date, curency):
+    currencies = Currency.objects.exclude(code=curency)
+    codes = ','.join([currency.code for currency in currencies])
+
     params = {
         'access_key': ACCESS_KEY,
-        'currencies': 'EUR,USD,RUB,KZT',
-        'source': budget_currency,
+        'currencies': codes,
+        # 'base': curency,
         'format': 1,
-        'date': date,
+        'date': date
     }
-    response = requests.get(ENDPOINT, params=params)
+    response = requests.get(f'{ENDPOINT}/historical', params=params)
     data = response.json()
 
     if data.get('success'):
-        source_currency_code = data['source']
+        source_currency_code = data['base']
         source_currency, created = Currency.objects.get_or_create(
             code=source_currency_code)
 
-        for quote, rate in data['quotes'].items():
+        for quote, rate in data['rates'].items():
             target_currency_code = quote[3:]
             target_currency, created = Currency.objects.get_or_create(
                 code=target_currency_code
@@ -44,7 +48,7 @@ def update_rates_for_date(date=None, budget_currency='HUF'):
             )
 
 
-def get_rate_for_date(from_currency, to_currency, date):
+def get_rate_for_date(from_currency, to_currency, date) -> Decimal:
     try:
         rate_obj = ExchangeRate.objects.get(
             from_currency=from_currency,
@@ -53,13 +57,14 @@ def get_rate_for_date(from_currency, to_currency, date):
         )
         return rate_obj.rate
     except ExchangeRate.DoesNotExist:
-        update_rates_for_date(date, from_currency.code)
-        try:
-            rate_obj = ExchangeRate.objects.get(
-                from_currency=from_currency,
-                to_currency=to_currency,
-                rate_date=date
-            )
-            return rate_obj.rate
-        except ExchangeRate.DoesNotExist:
-            return None
+        # update_rates_for_date(date, from_currency.code)
+        # try:
+        #     rate_obj = ExchangeRate.objects.get(
+        #         from_currency=from_currency,
+        #         to_currency=to_currency,
+        #         rate_date=date
+        #     )
+        #     return rate_obj.rate
+        # except ExchangeRate.DoesNotExist:
+        #     return None
+        return None

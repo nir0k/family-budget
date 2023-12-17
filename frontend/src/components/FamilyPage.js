@@ -64,7 +64,7 @@ const FamilyPage = () => {
     
 
     return (
-        <div className="family-page-container">
+        <div className="family-page-container main-page-container">
             {families.map(family => (
                 <div key={family.id}>
                     <div className="family-header">

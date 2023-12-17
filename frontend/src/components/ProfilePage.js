@@ -72,7 +72,7 @@ const ProfilePage = () => {
     if (!profile) return <div>Loading...</div>;
 
     return (
-        <div className="profile-page-container">
+        <div className="profile-page-container main-page-container">
             <h1>Profile</h1>
             {isEditMode ? (
                 <>

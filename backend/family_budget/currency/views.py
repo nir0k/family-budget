@@ -10,7 +10,7 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
 
-class ExchangeRateViewSet(viewsets.ReadOnlyModelViewSet):
+class ExchangeRateViewSet(viewsets.ModelViewSet):
     queryset = ExchangeRate.objects.all()
     serializer_class = ExchangeRateSerializer
-    pagination_class = None
+    # pagination_class = None

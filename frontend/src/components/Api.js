@@ -8,3 +8,4 @@ export * from './api/category';
 export * from './api/currency';
 export * from './api/users';
 export * from './api/family';
+export * from './api/exchangeRate';

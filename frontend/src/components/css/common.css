@@ -1,0 +1,39 @@
+.button-container {
+    left: 0; /* Align to the left side */
+    top: 0; /* Align to the top of the container */
+    margin: 10px; /* Add some margin for visual appeal */
+    text-align: left; /* Align text to the left */
+}
+
+.main-page-container {
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ag-grid-container {
+    flex-grow: 1; /* Grid takes the available space */
+}
+
+.button {
+    padding: 4px 8px; /* Reduced padding */
+    font-size: 12px; /* Reduced font size */
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Add any additional overrides here */
+}
+
+
+.delete-button {
+    background-color: #ee2400; /* Light red background */
+    border-color: #ee2400; /* Matching border color */
+}
+
+.delete-button:hover {
+    background-color: #ffb09c; /* Slightly darker red when hovered */
+}
+

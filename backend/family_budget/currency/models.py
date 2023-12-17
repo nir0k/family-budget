@@ -21,3 +21,6 @@ class ExchangeRate(models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=4)
     rate_date = models.DateField(default=date.today)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-last_updated']

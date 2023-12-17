@@ -7,15 +7,16 @@ import { faBars,
     faRightLeft,
     faCoins,
     faCreditCard,
-    faChartLine,
+    // faChartLine,
     faHouse,
     faChartBar,
     faUser,
     faRightFromBracket,
     faPeopleRoof,
-    faAddressCard
+    faAddressCard,
+    faMoneyBillTransfer,
+    faSterlingSign
 } from '@fortawesome/free-solid-svg-icons';
-
 
 const NavigationBar = ({ userDetails }) => {
     const { username, familyTitle } = userDetails;
@@ -24,13 +25,16 @@ const NavigationBar = ({ userDetails }) => {
     const userDropdownRef = useRef(null);
     const menuDropdownRef = useRef(null);
     const isMainPageActive = useMatch('/');
-    const isFamilyFinanceStateActive = useMatch('/family-finance-state')
+    // const isFamilyFinanceStateActive = useMatch('/family-finance-state')
     const isLoggedIn = Boolean(localStorage.getItem('authToken'));
     const isTransactionsActive = useMatch('/transactions');
     const isBudgetsActive = useMatch('/budget');
     const isAccountsActive = useMatch('/accounts');
     const isCategoriesActive = useMatch('/categories');
     const isLogout = useMatch('/logout')
+    const isCurrenciesActive = useMatch('/currency')
+
+    const isExchangeRate = useMatch('/exchange-rate')
 
     const toggleUserDropdown = () => {
         setUserDropdownOpen(!userDropdownOpen);
@@ -92,8 +96,14 @@ const NavigationBar = ({ userDetails }) => {
                                     <NavLink to="/categories" className={isCategoriesActive ? 'nav-link active-link' : 'nav-link'}>
                                         <FontAwesomeIcon icon={faChartBar} className="fa-icon"/> Categories
                                     </NavLink>
-                                    <NavLink to="/family-finance-state" className={isFamilyFinanceStateActive ? 'nav-link active-link' : 'nav-link'}>
+                                    {/* <NavLink to="/family-finance-state" className={isFamilyFinanceStateActive ? 'nav-link active-link' : 'nav-link'}>
                                         <FontAwesomeIcon icon={faChartLine} className="fa-icon"/> Family Finance State
+                                    </NavLink> */}
+                                    <NavLink to="/exchange-rate" className={isExchangeRate ? 'nav-link active-link' : 'nav-link'}>
+                                        <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa-icon"/> Exchange Rate
+                                    </NavLink>
+                                    <NavLink to="/currency" className={isCurrenciesActive ? 'nav-link active-link' : 'nav-link'}>
+                                        <FontAwesomeIcon icon={faSterlingSign} className="fa-icon"/> Currencies
                                     </NavLink>
                                 </div>
                             )}
