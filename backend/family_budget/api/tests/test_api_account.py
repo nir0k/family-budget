@@ -89,9 +89,9 @@ class ApiAccountTest(APITestCase):
     def test_ApiAccount(self):
         data = {
             'title': 'Test Account 1',
-            'type': self.account_type1.id,
-            'currency': self.currency1.id,
-            'owner': self.user.id
+            'type': self.account_type1.title,
+            'currency': self.currency1.code,
+            'owner': self.user.username
         }
         response = self.auth_client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED,
@@ -99,18 +99,18 @@ class ApiAccountTest(APITestCase):
         id = response.data['id']
         account = Account.objects.get(pk=id)
         self.assertEqual(account.title, data['title'])
-        self.assertEqual(account.type.id, data['type'])
-        self.assertEqual(account.currency.id, data['currency'])
-        self.assertEqual(account.owner.id, data['owner'])
+        self.assertEqual(account.type.title, data['type'])
+        self.assertEqual(account.currency.code, data['currency'])
+        self.assertEqual(account.owner.username, data['owner'])
         self.assertEqual(account.balance, 0)
 
         response = self.auth_client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK,
                          'Response code shold be 200')
         self.assertEqual(response.data[0]['title'], account.title)
-        self.assertEqual(response.data[0]['type'], account.type.id)
-        self.assertEqual(response.data[0]['currency'], account.currency.id)
-        self.assertEqual(response.data[0]['owner'], account.owner.id)
+        self.assertEqual(response.data[0]['type'], account.type.title)
+        self.assertEqual(response.data[0]['currency'], account.currency.code)
+        self.assertEqual(response.data[0]['owner'], account.owner.username)
         self.assertEqual(float(response.data[0]['balance']),
                          float(account.balance))
 
@@ -128,9 +128,9 @@ class ApiAccountTest(APITestCase):
 
         data = {
             'title': 'Test Account 1 put',
-            'type': self.account_type1.id,
-            'currency': self.currency1.id,
-            'owner': self.user.id,
+            'type': self.account_type1.title,
+            'currency': self.currency1.code,
+            'owner': self.user.username,
             'balance': 0
         }
         response = self.auth_client.put(url, data)
@@ -138,9 +138,9 @@ class ApiAccountTest(APITestCase):
                          'Response code should be 200')
         account = Account.objects.get(pk=id)
         self.assertEqual(account.title, data['title'])
-        self.assertEqual(account.type.id, data['type'])
-        self.assertEqual(account.currency.id, data['currency'])
-        self.assertEqual(account.owner.id, data['owner'])
+        self.assertEqual(account.type.title, data['type'])
+        self.assertEqual(account.currency.code, data['currency'])
+        self.assertEqual(account.owner.username, data['owner'])
         self.assertEqual(account.balance, data['balance'])
 
         response = self.auth_client.delete(url)
