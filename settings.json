@@ -1,0 +1,24 @@
+// {
+//     "python.testing.unittestArgs": [
+//         "-v",
+//         "-s",
+//         ".",
+//         "-p",
+//         "test_*.py"
+//     ],
+//     "python.testing.pytestEnabled": false,
+//     "python.testing.unittestEnabled": true,
+//     // "python.testing.pytestArgs": [
+//     //     "backend/family_budget"
+//     // ],
+    // "python.testing.cwd": "${workspaceFolder}/backend/family_budget",
+//     "terminal.integrated.env.linux": {
+//         "DJANGO_SETTINGS_MODULE": "family_budget.settings"
+//     },
+//     "terminal.integrated.env.windows": {
+//         "DJANGO_SETTINGS_MODULE": "family_budget.settings"
+//     },
+    // "terminal.integrated.env.osx": {
+    //     "DJANGO_SETTINGS_MODULE": "family_budget.settings"
+    // },
+// }
