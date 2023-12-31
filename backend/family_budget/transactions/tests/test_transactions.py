@@ -363,21 +363,6 @@ class AccountBalanceTest(TestCase):
         self.assertEqual(self.account2.balance, Decimal('200.00'))
         self.assertEqual(self.account3.balance, Decimal('1000105.00'))
 
-        # transaction = Transaction.objects.get(type__type="+",
-        #                                       category__title="Transfer")
-        # transaction.account_to = self.account2
-        # transaction.save()
-        # self.account1.refresh_from_db()
-        # self.account2.refresh_from_db()
-        # self.account3.refresh_from_db()
-        # trans1 = Transaction.objects.get(type__type="-",
-        #                                  category__title="Transfer")
-        # trans2 = Transaction.objects.get(type__type="+",
-        #                                  category__title="Transfer")
-        # self.assertEqual(self.account1.balance, Decimal('100.00'))
-        # self.assertEqual(self.account2.balance, Decimal('185.00'))
-        # self.assertEqual(self.account3.balance, Decimal('1000120.00'))
-
         transaction.delete()
 
         self.account1.refresh_from_db()
@@ -416,7 +401,7 @@ class AccountBalanceTest(TestCase):
         self.assertEqual(trans1.amount, Decimal('30.00'))
         self.assertEqual(trans2.currency.code, "USD")
         self.assertEqual(trans1.amount_converted, Decimal('30.00'))
-        self.assertEqual(trans2.amount_converted, Decimal('60.00'))    
+        self.assertEqual(trans2.amount_converted, Decimal('60.00'))
 
         transaction = Transaction.objects.get(type__type="+",
                                               category__title="Transfer")
