@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models, transaction
 
 from accounts.models import Account

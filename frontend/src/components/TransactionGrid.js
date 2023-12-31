@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-// import './css/common.css'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -54,12 +53,20 @@ const Transactions = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState([]);
     const [accountOptions, setAccountOptions] = useState([]);
+    const [isAccountToEditable, setIsAccountToEditable] = useState(false);
+
 
     const updateTableHeight = () => {
         const newHeight = window.innerHeight - someOffset;
         console.log("New height:", newHeight);
         setTableHeight(newHeight);
     };
+
+    useEffect(() => {
+        if (gridApi) {
+            gridApi.refreshCells({ force: true });
+        }
+    }, [isAccountToEditable, gridApi]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -87,7 +94,6 @@ const Transactions = () => {
     useEffect(() => {
         const debouncedUpdateHeight = debounce(updateTableHeight, 300);
         window.addEventListener('resize', debouncedUpdateHeight);
-        // Cleanup
         return () => {
             window.removeEventListener('resize', debouncedUpdateHeight);
         };
@@ -104,7 +110,6 @@ const Transactions = () => {
         currency: '',
         description: '',
         date: getCurrentDate(),
-        author: loggedInUserId,
     });
 
     const addNewRow = () => {
@@ -114,8 +119,7 @@ const Transactions = () => {
     
         gridApi.applyTransaction({ add: [newItem], addIndex: 0 });
         setNewTransaction(newItem);
-    
-        // Update dropdown values
+
         const filteredAccounts = accountOptions.filter(account => account.owner === loggedInUserId);
         const dropdownValues = filteredAccounts.map(account => ({ title: account.title }));
     
@@ -123,10 +127,8 @@ const Transactions = () => {
             gridApi.getColumnDef('account').cellEditorParams.values = dropdownValues;
         }
     
-        // Force refresh the grid or cells
         gridApi.refreshCells({ force: true });
     
-        // Start editing the first cell
         gridApi.startEditingCell({
             rowIndex: 0,
             colKey: 'title'
@@ -134,13 +136,10 @@ const Transactions = () => {
     
         setIsEditMode(true);
     };
-    
-    
 
     const cancelEdit = () => {
         setIsEditMode(false);
         setFilteredCategories(categoryOptions);
-        // Remove any rows that are marked as new
         const allRows = [];
         gridApi.forEachNode(node => {
             if (!node.data.isNew) {
@@ -150,7 +149,6 @@ const Transactions = () => {
         gridApi.setRowData(allRows);
         toast.success('Adding a new transaction was canceled');
     };
-    
     
     const createNewRowData = () => {
         return {
@@ -164,18 +162,14 @@ const Transactions = () => {
             currency: '',
             description: '',
             date: getCurrentDate(),
-            author: loggedInUserId
         };
     };
     
-
     const validateNewRecord = (record) => {
-        // List all required fields
-        const requiredFields = ['title', 'type', 'category', 'who', 'account', 'amount', 'currency', 'date'];
+        const requiredFields = ['title', 'type', 'category', 'who', 'account', 'amount', 'date'];
     
         for (let field of requiredFields) {
             if (!record[field]) {
-                // Field is empty or undefined
                 return false;
             }
         }
@@ -183,6 +177,19 @@ const Transactions = () => {
     };
 
     const handleCellEditingStarted = (event) => {
+        if (event.data.category === 'Transfer') {
+            const accountToCol = gridApi.getColumnDef('account_to');
+            if (accountToCol) {
+                accountToCol.editable = true;
+                gridApi.refreshHeader();
+            }
+        } else {
+            const accountToCol = gridApi.getColumnDef('account_to');
+            if (accountToCol) {
+                accountToCol.editable = false;
+                gridApi.refreshHeader();
+            }
+        }
         if (event.colDef.field === 'account') {
             const currentOwner = event.data.who;
             const filteredAccounts = accountOptions.filter(account => account.owner === currentOwner);
@@ -208,6 +215,31 @@ const Transactions = () => {
         if (event.colDef.field === 'currency') {
             event.api.getColumnDef('currency').cellEditorParams.values = currencyOptions.map(currency => ({ code: currency.code }));
         }
+        if (event.colDef.field === 'account_to') {
+            const dropdownValues = accountOptions.map(account => ({ title: `${account.owner} - ${account.title}` }));
+            
+            if (event.api && event.api.getCellEditorInstances) {
+                const cellEditorInstances = event.api.getCellEditorInstances({
+                    rowIndex: event.rowIndex,
+                    colKey: 'account_to'
+                });
+        
+                if (cellEditorInstances && cellEditorInstances.length > 0) {
+                    const accountEditor = cellEditorInstances[0];
+                    accountEditor.refreshOptions(dropdownValues, 'title', event.data.account_to);
+                }
+            }
+        }
+        if (event.colDef.field === 'category') {
+            const accountToCol = gridApi.getColumnDef('account_to');
+            if (event.newValue === 'Transfer' && accountToCol) {
+                accountToCol.editable = true;
+                gridApi.refreshCells({ force: true });
+            } else if (accountToCol) {
+                accountToCol.editable = false;
+                gridApi.refreshCells({ force: true });
+            }
+        }
     };
       
 
@@ -218,8 +250,8 @@ const Transactions = () => {
             toast.error('Please fill in all required fields.');
             return;
         }
-    
-        createTransaction(newTransaction)
+        const { currency, ...payloadWithoutCurrency } = newTransaction;
+        createTransaction(payloadWithoutCurrency)
             .then(response => {
                 if (response.ok) {
                     toast.success('Transaction added successfully!');
@@ -281,15 +313,17 @@ const Transactions = () => {
             const id = params.data.id;
             const updatedField = params.colDef.field;
             const newValue = params.newValue;
-            updateTransaction(id, { [updatedField]: newValue })
-                .then(response => {
-                    if (!response.ok) {
-                        toast.error('Failed to update data');
-                    }
-                })
-                .catch(error => {
-                    toast.error(`Error: ${error.message}`);
-                });
+            if (updatedField !== 'currency') {
+                updateTransaction(id, { [updatedField]: newValue })
+                    .then(response => {
+                        if (!response.ok) {
+                            toast.error('Failed to update data');
+                        }
+                    })
+                    .catch(error => {
+                        toast.error(`Error: ${error.message}`);
+                    });
+                }
         }
         if (params.colDef.field === 'type') {
             const selectedType = params.newValue;
@@ -299,9 +333,27 @@ const Transactions = () => {
             const selectedAccountTitle = params.newValue;
             const selectedAccount = accountOptions.find(acc => acc.title === selectedAccountTitle);
             if (selectedAccount) {
-                // Set the account ID instead of the title
                 params.data.account = selectedAccount.id; 
                 params.api.refreshCells({ force: true });
+            }
+        }
+        if (params.colDef.field === 'account_to') {
+            const selectedAccount = accountOptions.find(account => `${account.owner} - ${account.title}` === params.newValue);
+            if (selectedAccount) {
+                setNewTransaction(prevTransaction => ({
+                    ...prevTransaction,
+                    account_to: selectedAccount.id
+                }));
+            }
+        }
+        if (params.colDef.field === 'category') {
+            const isTransfer = params.newValue === 'Transfer';
+            setIsAccountToEditable(isTransfer);
+
+            const accountToCol = gridApi.getColumnDef('account_to');
+            if (accountToCol) {
+                accountToCol.editable = isTransfer;
+                gridApi.refreshCells({ force: true });
             }
         }
     };
@@ -327,7 +379,7 @@ const Transactions = () => {
             sortable: true,
             cellEditorParams: {
                 values: typeOptions,
-                property: 'title' // Specify the property name
+                property: 'title'
             }
         },
         { 
@@ -338,7 +390,7 @@ const Transactions = () => {
             sortable: true,
             cellEditorParams: {
                 values: filteredCategories,
-                property: 'title' // Specify the property name
+                property: 'title'
             }
         },
         { 
@@ -349,21 +401,9 @@ const Transactions = () => {
             sortable: true,
             cellEditorParams: {
                 values: userOptions,
-                property: 'username' // Use 'username' for the "Who" column
+                property: 'username'
             }
         },
-        // { 
-        //     headerName: "Account",
-        //     field: "account",
-        //     editable: true,
-        //     valueFormatter: (params) => accountOptions.find(acc => acc.id === params.value)?.title || '',
-        //     cellEditor: DropdownCellEditor,
-        //     sortable: true,
-        //     cellEditorParams: {
-        //         values: accountOptions.map(account => account.title),
-        //         property: 'title'
-        //     }
-        // },
         {
             headerName: "Account",
             field: "account",
@@ -374,23 +414,30 @@ const Transactions = () => {
                 values: accountOptions.map(account => account.title),
                 property: 'title'
             },
-            // Update the valueFormatter to display the title instead of the ID
             valueFormatter: (params) => {
                 const account = accountOptions.find(acc => acc.id === params.value);
                 return account ? account.title : '';
+            }
+        },
+        {
+            headerName: "Account To",
+            field: "account_to",
+            editable: () => isAccountToEditable,
+            cellEditor: DropdownCellEditor,
+            cellEditorParams: {
+                values: accountOptions.map(account => ({ id: account.id, title: `${account.owner} - ${account.title}` })),
+                property: 'title'
+            },
+            valueFormatter: (params) => {
+                const account = accountOptions.find(acc => acc.id === params.value);
+                return account ? `${account.owner} - ${account.title}` : '';
             }
         },
         { headerName: "Amount", field: "amount", valueFormatter: currencyFormatter, editable: true },
         { 
             headerName: "Currency",
             field: "currency",
-            editable: true,
-            cellEditor: DropdownCellEditor,
-            sortable: true,
-            cellEditorParams: {
-                values: currencyOptions,
-                property: 'code' // Specify the property name
-            }
+            editable: false,
         },
         { headerName: "Description", field: "description", editable: true, sortable: true, },
         { headerName: "Date", field: "date", valueFormatter: dateFormatter, editable: true, sortable: true, }

@@ -15,6 +15,9 @@ class TransactionViewSet(viewsets.ModelViewSet):
     permission_classes = (Or(IsUser, IsAdmin),)
 
     def perform_create(self, serializer):
+        account = serializer.validated_data.get('account')
+        if account and 'currency' not in serializer.validated_data:
+            serializer.validated_data['currency'] = account.currency
         serializer.save(author=self.request.user)
 
 
